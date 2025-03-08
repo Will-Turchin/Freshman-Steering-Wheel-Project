@@ -8,7 +8,8 @@ enum page
 {
     LOADING,
     STARTUP,
-    DRIVER
+    DRIVER,
+    YIPPEE
 };
 
 class NextionInterface
@@ -72,6 +73,8 @@ public:
     static void switchToStartUp();
 
     static void switchToDriver();
+
+    static void switchToYippee();
 
     static page getCurrentPage();
 };

@@ -19,7 +19,7 @@ void NextionInterface::init()
     Serial2.begin(115200);
     delay(200);
     Serial.println("Nextion Setup");
-    switchToLoading();
+    switchToDriver();
 }
 
 short NextionInterface::ctof(short celsius)
@@ -136,7 +136,7 @@ void NextionInterface::setFanBool(bool value)
     // String instruction = "";
 
     // if (value)
-    // {
+    // { 
     //     instruction = "fanbool.bco=" + String(RGB565_GREEN, DEC);
     //     sendNextionMessage(instruction);
     // }
@@ -267,20 +267,26 @@ void NextionInterface::setNeutral(bool value)
 
 void NextionInterface::switchToLoading()
 {
-    sendNextionMessage("page page1");
+    sendNextionMessage("page loading");
     current_page = page::LOADING;
 }
 
 void NextionInterface::switchToStartUp()
 {
-    sendNextionMessage("page page2");
+    sendNextionMessage("page startup");
     current_page = page::STARTUP;
 }
 
 void NextionInterface::switchToDriver()
 {
-    sendNextionMessage("page page3");
+    sendNextionMessage("page driver");
     current_page = page::DRIVER;
+}
+
+void NextionInterface::switchToYippee()
+{
+    sendNextionMessage("page yippee");
+    current_page = page::YIPPEE;
 }
 
 page NextionInterface::getCurrentPage()
