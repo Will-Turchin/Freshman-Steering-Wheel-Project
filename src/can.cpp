@@ -45,22 +45,26 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
 
 
     switch (msg.id){
-        case 280:
+        case 1600:
             NextionInterface::setRPM(msg.buf[0] * 100);
             NextionInterface::setWaterTemp(msg.buf[3]);
             RevLights::rpmBased(msg.buf[0] * 100);
             break;
 
-        case 281:
+        case 1614:
+            // TODO: CHECK LATER
             NextionInterface::setNeutral((msg.buf[4] & 16 ) << 0x10);
             break;
 
-        case 1280:
+        case 1609:
             if(msg.buf[0] == 48){
-                NextionInterface::setVoltage(msg.buf[2] * 0.1216);
+                // wrote -40 but it might be +40, I'm not sure -Dawson
+                NextionInterface::setOilTemp(msg.buf[1] - 40);
+                NextionInterface::setVoltage(msg.buf[5] * 0.1);
             }
             break;
 
+        // TODO: this doesnt appear on the ECUsensors file, ignoring for now
         case 1284:
             if(msg.buf[0] == 0 || msg.buf[0] == 1){
                 if(msg.buf[1] == 0 || msg.buf[1] == 1){
@@ -71,7 +75,7 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
                     Serial.println("Water Pump Error");
 
                 if(msg.buf[0] == 0 || msg.buf[0] == 1){
-                    NextionInterface::setFuelPumpValue(msg.buf[0]);
+                    //NextionInterface::setFuelPumpValue(msg.buf[0]);
                     NextionInterface::setFuelPumpBool(msg.buf[0]);
                 }   
                 else
@@ -87,13 +91,27 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
             break;
 
         case 1604:
+            // The math here is PROBABLY right Im not going to check it -Dawson
             NextionInterface::setOilPressure(msg.buf[6], msg.buf[7]);
             break;
 
         case 1623:
+            // Once again I assume this works even though it likely does not. -Dawson
             NextionInterface::setGear(msg);
             break;
 
+        // TODO: machine light indicator (MLI)
+
+        // lambda bool
+        case 1617:
+            NextionInterface::setLambda(msg.buf[0] * 100);
+            break;
+
+        case 2047:
+            // this is for warnings. if any value is greater than 0 it's big bad
+            if (msg.buf != 0) {
+                // TODO
+            }
         
         default:
             break;

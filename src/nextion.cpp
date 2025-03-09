@@ -115,118 +115,106 @@ void NextionInterface::setGear(const CAN_message_t &msg)
     }   
 }
 
+void NextionInterface::setButtonImage(String elementName, bool value) {
+    String instruction = "";
+
+    if (value) {
+        instruction = elementName + ".pic=" + String(GREEN_BUTTON_ID, DEC);
+    } else {
+        instruction = elementName + ".pic=" + String(RED_BUTTON_ID, DEC);
+    }
+
+    sendNextionMessage(instruction);
+
+}
+
 void NextionInterface::setFuelPumpBool(bool value)
 {
-    // String instruction = "";
-
-    // if (value)
-    // {
-    //     instruction = "fuelpumpbool.bco=" + String(RGB565_GREEN, DEC);
-    //     sendNextionMessage(instruction);
-    // }
-    // else
-    // {
-    //     instruction = "fuelpumpbool.bco=" + String(RGB565_RED, DEC);
-    //     sendNextionMessage(instruction);
-    // }
+    setButtonImage("fuelpumpbool", value);
 }
 
 void NextionInterface::setFanBool(bool value)
 {
-    // String instruction = "";
-
-    // if (value)
-    // { 
-    //     instruction = "fanbool.bco=" + String(RGB565_GREEN, DEC);
-    //     sendNextionMessage(instruction);
-    // }
-    // else
-    // {
-    //     instruction = "fanbool.bco=" + String(RGB565_RED, DEC);
-    //     sendNextionMessage(instruction);
-    // }
+    setButtonImage("fanbool", value);
 }
 
 void NextionInterface::setWaterPumpBool(bool value)
 {
-    // String instruction = "";
+    setButtonImage("waterpumpbool", value);
+}
 
-    // if (value)
-    // {
-    //     instruction = "waterpumpbool.bco=" + String(RGB565_GREEN, DEC);
-    //     sendNextionMessage(instruction);
-    // }
-    // else
-    // {
-    //     instruction = "waterpumpbool.bco=" + String(RGB565_RED, DEC);
-    //     sendNextionMessage(instruction);
-    // }
+void NextionInterface::setMLIBool(bool value) {
+    setButtonImage("mlibool", value);
+}
+
+void NextionInterface::setMessageBool(bool value) {
+    setButtonImage("messagebool", value);
 }
 
 void NextionInterface::setFuelPumpValue(bool value)
 {
-    // String instruction = "";
+//     String instruction = "";
 
-    // if (value)
-    // {
-    //     instruction = "fuelpumpvalue.bco=" + String(RGB565_GREEN, DEC);
-    //     sendNextionMessage(instruction);
+//     if (value)
+//     {
+//         instruction = "fuelpumpvalue.bco=" + String(RGB565_GREEN, DEC);
+//         sendNextionMessage(instruction);
 
-    //     instruction = "fuelpumpvalue.txt=\"ON\"";
-    //     sendNextionMessage(instruction);
-    // }
-    // else
-    // {
-    //     instruction = "fuelpumpvalue.bco=" + String(RGB565_RED, DEC);
-    //     sendNextionMessage(instruction);
+//         instruction = "fuelpumpvalue.txt=\"ON\"";
+//         sendNextionMessage(instruction);
+//     }
+//     else
+//     {
+//         instruction = "fuelpumpvalue.bco=" + String(RGB565_RED, DEC);
+//         sendNextionMessage(instruction);
 
-    //     instruction = "fuelpumpvalue.txt=\"OFF\"";
-    //     sendNextionMessage(instruction);
-    // }
+//         instruction = "fuelpumpvalue.txt=\"OFF\"";
+//         sendNextionMessage(instruction);
+//     }
 }
 
 void NextionInterface::setFanValue(bool value)
 {
-    // String instruction = "";
+//     // String instruction = "";
 
-    // if (value)
-    // {
-    //     instruction = "fanvalue.bco=" + String(RGB565_GREEN, DEC);
-    //     sendNextionMessage(instruction);
+//     // if (value)
+//     // {
+//     //     instruction = "fanvalue.bco=" + String(RGB565_GREEN, DEC);
+//     //     sendNextionMessage(instruction);
 
-    //     instruction = "fanvalue.txt=\"ON\"";
-    //     sendNextionMessage(instruction);
-    // }
-    // else
-    // {
-    //     instruction = "fanvalue.bco=" + String(RGB565_RED, DEC);
-    //     sendNextionMessage(instruction);
+//     //     instruction = "fanvalue.txt=\"ON\"";
+//     //     sendNextionMessage(instruction);
+//     // }
+//     // else
+//     // {
+//     //     instruction = "fanvalue.bco=" + String(RGB565_RED, DEC);
+//     //     sendNextionMessage(instruction);
 
-    //     instruction = "fanvalue.txt=\"OFF\"";
-    //     sendNextionMessage(instruction);
-    // }
+//     //     instruction = "fanvalue.txt=\"OFF\"";
+//     //     sendNextionMessage(instruction);
+//     // }
 }
 
 void NextionInterface::setWaterPumpValue(bool value)
 {
-    // String instruction = "";
+//     // String instruction = "";
 
-    // if (value)
-    // {
-    //     instruction = "waterpumpvalue.bco=" + String(RGB565_GREEN, DEC);
-    //     sendNextionMessage(instruction);
+//     // if (value)
+//     // {
+//     //     instruction = "waterpumpvalue.bco=" + String(RGB565_GREEN, DEC);
+//     //     sendNextionMessage(instruction);
 
-    //     instruction = "waterpumpvalue.txt=\"ON\"";
-    //     sendNextionMessage(instruction);
-    // }
-    // else
-    // {
-    //     instruction = "waterpumpvalue.bco=" + String(RGB565_RED, DEC);
-    //     sendNextionMessage(instruction);
+//     //     instruction = "waterpumpvalue.txt=\"ON\"";
+//     //     sendNextionMessage(instruction);
+//     // }
+//     // else
+//     // {
+//     //     instruction = "waterpumpvalue.bco=" + String(RGB565_RED, DEC);
+//     //     sendNextionMessage(instruction);
 
-    //     instruction = "waterpumpvalue.txt=\"OFF\"";
-    //     sendNextionMessage(instruction);
-    // }
+//     //     instruction = "waterpumpvalue.txt=\"OFF\"";
+//     //     sendNextionMessage(instruction);
+//     // }
 }
 
 void NextionInterface::setLambda(float value)
@@ -288,6 +276,12 @@ void NextionInterface::switchToYippee()
     sendNextionMessage("page yippee");
     current_page = page::YIPPEE;
 }
+
+void NextionInterface::switchToWarning() {
+    sendNextionMessage("page warning");
+    current_page = page::WARNING;
+}
+
 
 page NextionInterface::getCurrentPage()
 {

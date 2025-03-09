@@ -43,21 +43,19 @@ void setup() {
   //timer.begin(shifterCallback, 20000); // 20,000 microseconds = 20 milliseconds = 50 Hz
 }
 
-
-
 void loop() {
-  //CanInterface::task();
+  CanInterface::task();
   dialCallBack();
-  if(dial1 == 1 && NextionInterface::getCurrentPage() != STARTUP){
-    NextionInterface::switchToStartUp();
-  } else if(dial1 == 2 && NextionInterface::getCurrentPage() != YIPPEE) {
-    NextionInterface::switchToYippee();
+  if(dial1 == 1 && NextionInterface::getCurrentPage() != DRIVER){
+    NextionInterface::switchToDriver();
+  } else if(dial1 == 2 && NextionInterface::getCurrentPage() != WARNING) {
+    NextionInterface::switchToWarning();
   } else if(dial1 == 3 && NextionInterface::getCurrentPage() != LOADING){
     NextionInterface::switchToLoading();
   }
 
   NextionInterface::setWaterTemp(dial2);
-  delay(50);
+  delay(100);
 }
 
 

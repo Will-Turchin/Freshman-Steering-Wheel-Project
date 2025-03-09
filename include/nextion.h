@@ -9,7 +9,8 @@ enum page
     LOADING,
     STARTUP,
     DRIVER,
-    YIPPEE
+    YIPPEE,
+    WARNING
 };
 
 class NextionInterface
@@ -25,6 +26,9 @@ private:
     static int const RGB565_ORANGE = 47936;
     static int const RGB565_RED = 45056;
     static int const RGB565_BLACK = 0;
+
+    static int const GREEN_BUTTON_ID = 19;
+    static int const RED_BUTTON_ID = 20;
 
     static bool neutral;
     static uint8_t waterTemp;
@@ -52,11 +56,13 @@ public:
 
     static void setGear(const CAN_message_t &msg);
 
+    static void setButtonImage(String elementName, bool value);
+
     static void setFuelPumpBool(bool value);
-
     static void setFanBool(bool value);
-
     static void setWaterPumpBool(bool value);
+    static void setMLIBool(bool value);
+    static void setMessageBool(bool value);
 
     static void setFuelPumpValue(bool value);
 
@@ -69,12 +75,10 @@ public:
     static void setNeutral(bool value);
 
     static void switchToLoading();
-
     static void switchToStartUp();
-
     static void switchToDriver();
-
     static void switchToYippee();
+    static void switchToWarning();
 
     static page getCurrentPage();
 };
