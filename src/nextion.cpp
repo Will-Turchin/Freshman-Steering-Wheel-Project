@@ -16,7 +16,7 @@ NextionInterface::NextionInterface() {}
 
 void NextionInterface::init()
 {
-    Serial2.begin(115200);
+    Serial2.begin(9600);
     delay(200);
     Serial.println("Nextion Setup");
     switchToDriver();

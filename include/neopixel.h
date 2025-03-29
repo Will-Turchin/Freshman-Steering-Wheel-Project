@@ -6,25 +6,42 @@
 class RevLights
 {
 private:
+
+    static const int REDLINE = 13000;
+    static const int SHIFT_POINT = 12000;
+    static const int RPM_DIFFERENCE = 500;
+
     static int LEDPINS;
     static int NUMPIXELS;
+    
+    // Were making an array of leds that each have an rpm threshold and a color
+    struct ledRPMThreshold {
+        int threshold;
+        int color;
+    };
+    static ledRPMThreshold *ledRPMThresholds;
 
     static Adafruit_NeoPixel pixels;
 
-    static const int lightRed = (255 << 16) | (20 << 8) | 0;
-    static const int darkRed = (255 << 16) | (0 << 8) | 0;
+    static const int LIGHT_RED = (255 << 16) | (20 << 8) | 0;
+    // FF1400
+    static const int DARK_RED = (255 << 16) | (0 << 8) | 0;
 
-    static const int lightGreen = (120 << 16) | (255 << 8) | 0;
-    static const int darkGreen = (0 << 16) | (255 << 8) | 0;
+    static const int LIGHT_GREEN = (120 << 16) | (255 << 8) | 0;
+    static const int DARK_GREEN = (0 << 16) | (255 << 8) | 0;
 
-    static const int lightBlue = (0 << 16) | (250 << 8) | 187;
-    static const int darkBlue = (0 << 16) | (0 << 8) | 255;
+    static const int LIGHT_BLUE = (0 << 16) | (250 << 8) | 187;
+    static const int DARK_BLUE = (0 << 16) | (0 << 8) | 255;
 
-    static const int blank = 0;
+    static const int YELLOW = (255 << 16) | (255 << 8) | 0;
+
+    static const int BLANK = 0;
+
 
 public:
     RevLights()
     {
+        ledRPMThresholds = new ledRPMThreshold[NUMPIXELS];
         init();
     }
 
@@ -37,33 +54,39 @@ public:
 
         delay(50);
         rpmBased(0);
+        //ledRPMThresholds = new ledRPMThreshold[NUM_PIXELS];
+        
+        // fill the thresholds array
+        for (int i = 8; i < 12; i++) {
+            ledRPMThresholds[i].threshold = SHIFT_POINT;
+            ledRPMThresholds[i].color = DARK_BLUE;
+        }
+        for (int i = 7; i >= 0; i--) {
+            ledRPMThresholds[i].threshold = ledRPMThresholds[i+1].threshold - RPM_DIFFERENCE;
+
+            if (i >= 4) {
+                ledRPMThresholds[i].color = DARK_GREEN;
+            } else {
+                ledRPMThresholds[i].color = YELLOW;
+            }
+        }
     }
 
     void static rpmBased(int rpm)
     {
-        if (rpm < 8000)
-            for (int x = 0; x < 16; x++)
-                pixels.setPixelColor(x, blank);
-
-        else
-        {
-            if (rpm > 8000)
-                for (int x = 0; x < 5; x++)
-                    pixels.setPixelColor(x, darkGreen);
-
-            if (rpm > 9000)
-                for (int x = 5; x < 11; x++)
-                    pixels.setPixelColor(x, darkRed);
-
-            if (rpm > 10500)
-                for (int x = 11; x < 16; x++)
-                    pixels.setPixelColor(x, darkBlue);
-
-            if (rpm > 12000)
-                for (int x = 0; x < 16; x++)
-                    pixels.setPixelColor(x, darkRed);
+        for (int i = 0; i < 12; i++) { //checks each led threshold, if met sets it to it's color
+            if (rpm >= ledRPMThresholds[i].threshold) {
+                pixels.setPixelColor(i, ledRPMThresholds[i].color);
+            } else {
+                pixels.setPixelColor(i, BLANK);
+            }
         }
 
+        if(rpm >= REDLINE){ //If RPM past redline set the revlights all to red
+            for (int i = 0; i < 12; i++) {
+                pixels.setPixelColor(i, DARK_RED);
+            }
+        }
         pixels.show();
     }
 };

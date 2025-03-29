@@ -36,12 +36,16 @@ void setup() {
   delay(8000);
   Serial.begin(9600);
 
+  Serial.println("Starting nextion interface");
   NextionInterface::init(); // Creates Serial Port to Display
+  Serial.println("Nextion interface initialized.");
 
   CanInterface::init();
 
   //timer.begin(shifterCallback, 20000); // 20,000 microseconds = 20 milliseconds = 50 Hz
 }
+
+int peen = 0;
 
 void loop() {
   CanInterface::task();
@@ -55,7 +59,11 @@ void loop() {
   }
 
   NextionInterface::setWaterTemp(dial2);
-  delay(100);
+  NextionInterface::setRPM(peen);
+  peen = (peen >= 16000) ? 8000 : peen + 500;
+  RevLights::rpmBased(peen);
+  Serial.println(peen);
+  delay(1000);
 }
 
 

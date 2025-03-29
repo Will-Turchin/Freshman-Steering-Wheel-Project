@@ -1,6 +1,6 @@
 #include "neopixel.h"
 
-int RevLights::LEDPINS = 4;
-int RevLights::NUMPIXELS = 16;
+RevLights::LED_PINS = 26;
+RevLights::NUM_PIXELS = 12;
 
-Adafruit_NeoPixel RevLights::pixels(NUMPIXELS, LEDPINS, NEO_GRB + NEO_KHZ400);
+Adafruit_NeoPixel RevLights::pixels(NUM_PIXELS, LED_PINS, NEO_GRB + NEO_KHZ800);
