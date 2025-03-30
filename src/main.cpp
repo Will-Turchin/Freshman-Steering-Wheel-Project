@@ -27,11 +27,12 @@ void dialCallBack(){
   dial3 = digitalRead(A12);
 }
 
+RevLights* lights;
+int peen = 8000;
+
 void setup() {
   pinMode(shiftUp, INPUT_PULLUP);
   pinMode(shiftDown, INPUT_PULLUP);
-
-  RevLights lights{};
 
   delay(8000);
   Serial.begin(9600);
@@ -42,10 +43,10 @@ void setup() {
 
   CanInterface::init();
 
+  lights = new RevLights();
+
   //timer.begin(shifterCallback, 20000); // 20,000 microseconds = 20 milliseconds = 50 Hz
 }
-
-int peen = 0;
 
 void loop() {
   CanInterface::task();
@@ -60,13 +61,11 @@ void loop() {
 
   NextionInterface::setWaterTemp(dial2);
   NextionInterface::setRPM(peen);
-  peen = (peen >= 16000) ? 8000 : peen + 500;
-  RevLights::rpmBased(peen);
-  Serial.println(peen);
-  delay(1000);
+  peen = (peen >= 14000) ? 8000 : peen + 500;
+  lights->rpmBased(peen);
+  //Serial.println(peen);
+  delay(250);
 }
-
-
 
 void shifterCallback() { // This function will be called every 20 milliseconds (50 Hz)
   static bool shiftUpState = false;
