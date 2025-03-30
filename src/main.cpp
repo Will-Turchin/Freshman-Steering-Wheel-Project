@@ -27,9 +27,6 @@ void dialCallBack(){
   dial3 = digitalRead(A12);
 }
 
-RevLights* lights;
-int peen = 8000;
-
 void setup() {
   pinMode(shiftUp, INPUT_PULLUP);
   pinMode(shiftDown, INPUT_PULLUP);
@@ -43,26 +40,16 @@ void setup() {
 
   CanInterface::init();
 
-  lights = new RevLights();
+  RevLights::init();
 
   //timer.begin(shifterCallback, 20000); // 20,000 microseconds = 20 milliseconds = 50 Hz
 }
 
 void loop() {
   CanInterface::task();
-  dialCallBack();
-  if(dial1 == 1 && NextionInterface::getCurrentPage() != DRIVER){
-    NextionInterface::switchToDriver();
-  } else if(dial1 == 2 && NextionInterface::getCurrentPage() != WARNING) {
-    NextionInterface::switchToWarning();
-  } else if(dial1 == 3 && NextionInterface::getCurrentPage() != LOADING){
-    NextionInterface::switchToLoading();
-  }
-
-  NextionInterface::setWaterTemp(dial2);
-  NextionInterface::setRPM(peen);
-  peen = (peen >= 14000) ? 8000 : peen + 500;
-  lights->rpmBased(peen);
+  // NextionInterface::setRPM(peen);
+  // peen = (peen >= 14000) ? 8000 : peen + 500;
+  //lights->rpmBased(peen);
   //Serial.println(peen);
   delay(250);
 }

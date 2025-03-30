@@ -53,7 +53,7 @@ public:
         pixels.show();
 
         delay(50);
-        rpmBased(0);
+        updateLights(0);
         //ledRPMThresholds = new ledRPMThreshold[NUM_PIXELS];
         
         // fill the thresholds array
@@ -73,7 +73,7 @@ public:
         }
     }
 
-    void static rpmBased(int rpm)
+    void static updateLights(int rpm)
     {
         pixels.clear();
         if(rpm >= REDLINE){ //If RPM past redline set the revlights all to red

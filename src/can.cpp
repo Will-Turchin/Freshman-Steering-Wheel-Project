@@ -8,6 +8,7 @@ FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> CanInterface::Can0;
 CanInterface::CanInterface(){}
 
 bool CanInterface::canActive = false;
+//static RevLights* lights;
 
 bool CanInterface::init(){
     pinMode(6, OUTPUT); digitalWrite(6, LOW); /* optional tranceiver enable pin */
@@ -18,6 +19,7 @@ bool CanInterface::init(){
     Can0.enableFIFOInterrupt();
     Can0.onReceive(receive_can_updates);
     Can0.mailboxStatus();
+    //lights = new RevLights();
     return 1;
 }
 
@@ -48,7 +50,7 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
         case 1600:
             NextionInterface::setRPM(msg.buf[0] * 100);
             NextionInterface::setWaterTemp(msg.buf[3]);
-            RevLights::rpmBased(msg.buf[0] * 100);
+            RevLights::updateLights(msg.buf[0] * 100);
             break;
 
         case 1614:
