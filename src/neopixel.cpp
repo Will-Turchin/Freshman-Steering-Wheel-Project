@@ -1,6 +1,6 @@
 #include "neopixel.h"
 
-RevLights::LED_PINS = 26;
-RevLights::NUM_PIXELS = 12;
+// Define static variables outside the class
+RevLights::ledRPMThreshold* RevLights::ledRPMThresholds = nullptr; //init pointer 
 
-Adafruit_NeoPixel RevLights::pixels(NUM_PIXELS, LED_PINS, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel RevLights::pixels(RevLights::NUM_PIXELS, RevLights::LED_PINS, NEO_GRB + NEO_KHZ800);

@@ -6,20 +6,18 @@
 class RevLights
 {
 private:
+    static const int LED_PINS = 26;
+    static const int NUM_PIXELS = 12;
 
     static const int REDLINE = 13000;
     static const int SHIFT_POINT = 12000;
     static const int RPM_DIFFERENCE = 500;
-
-    static int LEDPINS;
-    static int NUMPIXELS;
     
     // Were making an array of leds that each have an rpm threshold and a color
     struct ledRPMThreshold {
         int threshold;
         int color;
     };
-    static ledRPMThreshold *ledRPMThresholds;
 
     static Adafruit_NeoPixel pixels;
 
@@ -39,10 +37,15 @@ private:
 
 
 public:
+    static ledRPMThreshold *ledRPMThresholds;
     RevLights()
     {
-        ledRPMThresholds = new ledRPMThreshold[NUMPIXELS];
+        ledRPMThresholds = new ledRPMThreshold[NUM_PIXELS];
         init();
+    }
+    ~RevLights()
+    {
+        delete[] ledRPMThresholds; // Free allocated memory
     }
 
     void static init()
