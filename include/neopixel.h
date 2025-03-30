@@ -3,15 +3,16 @@
 #ifndef NEOPIXEL_H
 #define NEOPIXEL_H
 
+
 class RevLights
 {
 private:
-    static const int LED_PINS = 26;
-    static const int NUM_PIXELS = 12;
+    constexpr static const int LED_PINS = 26;
+    constexpr static const int NUM_PIXELS = 12;
 
-    static const int REDLINE = 13000;
-    static const int SHIFT_POINT = 12000;
-    static const int RPM_DIFFERENCE = 500;
+    constexpr static const int REDLINE = 13000;
+    constexpr static const int SHIFT_POINT = 12000;
+    constexpr static const int RPM_DIFFERENCE = 500;
     
     // Were making an array of leds that each have an rpm threshold and a color
     struct ledRPMThreshold {
@@ -21,19 +22,14 @@ private:
 
     static Adafruit_NeoPixel pixels;
 
-    static const int LIGHT_RED = (255 << 16) | (20 << 8) | 0;
-    // FF1400
-    static const int DARK_RED = (0 << 16) | (255 << 8) | 0;
-
-    static const int LIGHT_GREEN = (120 << 16) | (255 << 8) | 0;
-    static const int DARK_GREEN = (255 << 16) | (0 << 8) | 0;
-
-    static const int LIGHT_BLUE = (0 << 16) | (250 << 8) | 187;
-    static const int DARK_BLUE = (0 << 16) | (0 << 8) | 255;
-
-    static const int YELLOW = (255 << 16) | (255 << 8) | 0;
-
-    static const int BLANK = 0;
+    constexpr static const int LIGHT_RED = (255 << 16) | (20 << 8) | 0;
+    constexpr static const int DARK_RED = (0 << 16) | (255 << 8) | 0; //using
+    constexpr static const int LIGHT_GREEN = (120 << 16) | (255 << 8) | 0;
+    constexpr static const int DARK_GREEN = (255 << 16) | (0 << 8) | 0; //using
+    constexpr static const int LIGHT_BLUE = (0 << 16) | (250 << 8) | 187;
+    constexpr static const int DARK_BLUE = (0 << 16) | (0 << 8) | 255; //using
+    constexpr static const int YELLOW = (255 << 16) | (255 << 8) | 0; //using
+    constexpr static const int BLANK = 0; //using
 
 
 public:
@@ -86,6 +82,11 @@ public:
             for (int i = 0; i < 12; i++) {
                 pixels.setPixelColor(i, DARK_RED);
             }
+            pixels.show();
+            for (int i = 0; i < 12; i++) {
+                pixels.setPixelColor(i, BLANK);
+            }
+            pixels.show();
         } else {
             for (int i = 0; i < 12; i++) { //checks each led threshold, if met sets it to it's color
                 if (rpm >= ledRPMThresholds[i].threshold) {
@@ -94,8 +95,9 @@ public:
                     pixels.setPixelColor(i, BLANK);
                 }
             }
+            pixels.show();
         }
-        pixels.show();
+        
     }
 };
 
