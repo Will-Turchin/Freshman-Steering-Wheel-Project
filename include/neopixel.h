@@ -22,14 +22,12 @@ private:
 
     static Adafruit_NeoPixel pixels;
 
-    constexpr static const int LIGHT_RED = (255 << 16) | (20 << 8) | 0;
-    constexpr static const int DARK_RED = (0 << 16) | (255 << 8) | 0; //using
-    constexpr static const int LIGHT_GREEN = (120 << 16) | (255 << 8) | 0;
-    constexpr static const int DARK_GREEN = (255 << 16) | (0 << 8) | 0; //using
-    constexpr static const int LIGHT_BLUE = (0 << 16) | (250 << 8) | 187;
-    constexpr static const int DARK_BLUE = (0 << 16) | (0 << 8) | 255; //using
-    constexpr static const int YELLOW = (255 << 16) | (255 << 8) | 0; //using
-    constexpr static const int BLANK = 0; //using
+    // in GRB
+    constexpr static const int LED_COLOR_RED = 0x00FF00;
+    constexpr static const int LED_COLOR_GREEN = 0xFF0000;
+    constexpr static const int LED_COLOR_BLUE = 0x0000FF;
+    constexpr static const int LED_COLOR_YELLOW = 0x7FFF00;
+    constexpr static const int LED_COLOR_OFF = 0;
 
 
 public:
@@ -61,16 +59,16 @@ public:
         // fill the thresholds array
         for (int i = 8; i < 12; i++) {
             ledRPMThresholds[i].threshold = SHIFT_POINT;
-            ledRPMThresholds[i].color = DARK_BLUE;
+            ledRPMThresholds[i].color = LED_COLOR_BLUE;
             Serial.println(ledRPMThresholds[i].threshold);
         }
         for (int i = 7; i >= 0; i--) {
             ledRPMThresholds[i].threshold = ledRPMThresholds[i+1].threshold - RPM_DIFFERENCE;
             Serial.println(ledRPMThresholds[i].threshold);
             if (i >= 4) {
-                ledRPMThresholds[i].color = DARK_GREEN;
+                ledRPMThresholds[i].color = LED_COLOR_GREEN;
             } else {
-                ledRPMThresholds[i].color = YELLOW;
+                ledRPMThresholds[i].color = LED_COLOR_YELLOW;
             }
         }
     }
@@ -80,24 +78,19 @@ public:
         pixels.clear();
         if(rpm >= REDLINE){ //If RPM past redline set the revlights all to red
             for (int i = 0; i < 12; i++) {
-                pixels.setPixelColor(i, DARK_RED);
+                pixels.setPixelColor(i, LED_COLOR_RED);
             }
-            pixels.show();
-            for (int i = 0; i < 12; i++) {
-                pixels.setPixelColor(i, BLANK);
-            }
-            pixels.show();
         } else {
             for (int i = 0; i < 12; i++) { //checks each led threshold, if met sets it to it's color
                 if (rpm >= ledRPMThresholds[i].threshold) {
                     pixels.setPixelColor(i, ledRPMThresholds[i].color);
                 } else {
-                    pixels.setPixelColor(i, BLANK);
+                    pixels.setPixelColor(i, LED_COLOR_OFF);
                 }
             }
-            pixels.show();
+            
         }
-        
+        pixels.show();
     }
 };
 
