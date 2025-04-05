@@ -46,7 +46,7 @@ public:
     void static init()
     {
         Serial.begin(9600);
-        Serial.println("<><>Init Function called<><>");
+        Serial.println("Rev Lights Initalized");
         pixels.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
         pixels.setBrightness(75); // Normal 150
         pixels.clear();

@@ -24,4 +24,4 @@ public:
     static void task();
 };
 
-#endif //CAN_H
+#endif //CAN_

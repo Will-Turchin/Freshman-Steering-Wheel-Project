@@ -11,14 +11,17 @@ bool CanInterface::canActive = false;
 //static RevLights* lights;
 
 bool CanInterface::init(){
-    pinMode(6, OUTPUT); digitalWrite(6, LOW); /* optional tranceiver enable pin */
+    // pinMode(6, OUTPUT); digitalWrite(6, LOW); /* optional tranceiver enable pin */
+    pinMode(32,OUTPUT); digitalWrite(32,HIGH);
+    pinMode(33,OUTPUT); digitalWrite(33,HIGH);
+
     Can0.begin();
     Can0.setBaudRate(1000000);
     Can0.setMaxMB(16);
     Can0.enableFIFO();
     Can0.enableFIFOInterrupt();
     Can0.onReceive(receive_can_updates);
-    Can0.mailboxStatus();
+    // Can0.mailboxStatus();
     //lights = new RevLights();
     return 1;
 }
@@ -40,6 +43,8 @@ void CanInterface::print_can_sniff(const CAN_message_t &msg){
 void CanInterface::receive_can_updates(const CAN_message_t &msg){
     page currentPage = NextionInterface::getCurrentPage();
     canActive = true;
+    Serial.println(msg.id);
+
 
     if(currentPage != page::DRIVER){
         NextionInterface::switchToDriver();

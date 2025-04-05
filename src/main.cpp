@@ -51,7 +51,7 @@ void loop() {
   // peen = (peen >= 14000) ? 8000 : peen + 500;
   //lights->rpmBased(peen);
   //Serial.println(peen);
-  delay(250);
+  // delay(250);
 }
 
 void shifterCallback() { // This function will be called every 20 milliseconds (50 Hz)
