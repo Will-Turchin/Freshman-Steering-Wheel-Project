@@ -15,24 +15,14 @@ IntervalTimer timer;
 int const shiftUp = 37;
 int const shiftDown = 36;
 
-int dial1, dial2, dial3;
-void dialCallBack(){
-  dial1 = analogRead(A10);
-  dial1 = dial1*3.0/1023.0;
-  //Serial.printf("A10 %d\n", dial1); //this one is good
-  //Serial.printf("A11 %d\n", digitalRead(A11));
-  dial2 = analogRead(A11);
-  dial2 = dial2%450;
-  //Serial.printf("A12 %d\n", digitalRead(A12));
-  dial3 = digitalRead(A12);
-}
-
 void setup() {
   pinMode(shiftUp, INPUT_PULLUP);
   pinMode(shiftDown, INPUT_PULLUP);
-
+  
   delay(8000);
   Serial.begin(9600);
+  Serial.println("prong1");
+
 
   Serial.println("Starting nextion interface");
   NextionInterface::init(); // Creates Serial Port to Display
@@ -40,7 +30,7 @@ void setup() {
 
   CanInterface::init();
 
-  RevLights::init();
+  RevLights::init();//<><><>WARNING VOLATILE<><><>
 
   //timer.begin(shifterCallback, 20000); // 20,000 microseconds = 20 milliseconds = 50 Hz
 }

@@ -21,7 +21,6 @@ private:
     };
 
     static Adafruit_NeoPixel pixels;
-
     // in GRB
     constexpr static const int LED_COLOR_RED = 0x00FF00;
     constexpr static const int LED_COLOR_GREEN = 0xFF0000;
@@ -47,14 +46,18 @@ public:
     {
         Serial.begin(9600);
         Serial.println("Rev Lights Initalized");
-        pixels.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
+        ledRPMThresholds = new ledRPMThreshold[NUM_PIXELS]; // INITIALIZE ledRPMThreshold (REQUIRED)
+        pixels.begin();// INITIALIZE NeoPixel strip object (REQUIRED)
+        Serial.println("Prong A1");
         pixels.setBrightness(75); // Normal 150
+        Serial.println("Prong A2");
         pixels.clear();
+        Serial.println("Prong A3");
         pixels.show();
+        Serial.println("Prong A4");
 
-        delay(50);
-        updateLights(0);
-        //ledRPMThresholds = new ledRPMThreshold[NUM_PIXELS];
+        Serial.println("Prong A5");
+        
         
         // fill the thresholds array
         for (int i = 8; i < 12; i++) {
@@ -62,6 +65,7 @@ public:
             ledRPMThresholds[i].color = LED_COLOR_BLUE;
             Serial.println(ledRPMThresholds[i].threshold);
         }
+        Serial.println("Prong A6");
         for (int i = 7; i >= 0; i--) {
             ledRPMThresholds[i].threshold = ledRPMThresholds[i+1].threshold - RPM_DIFFERENCE;
             Serial.println(ledRPMThresholds[i].threshold);
@@ -71,11 +75,16 @@ public:
                 ledRPMThresholds[i].color = LED_COLOR_YELLOW;
             }
         }
+        Serial.println("Prong A7");
+        delay(100);
+        updateLights(0);
     }
 
-    void static updateLights(int rpm)
-    {
+    void static updateLights(int rpm) //DEV NOTE: If this class is failing, it likely means data types arent being initialized
+    {   
+        //Serial.println("Prong B1");
         pixels.clear();
+        //Serial.println("Prong B2");
         if(rpm >= REDLINE){ //If RPM past redline set the revlights all to red
             for (int i = 0; i < 12; i++) {
                 pixels.setPixelColor(i, LED_COLOR_RED);
@@ -90,7 +99,9 @@ public:
             }
             
         }
+        //Serial.println("Prong B3");
         pixels.show();
+        //Serial.println("Prong B4");
     }
 };
 

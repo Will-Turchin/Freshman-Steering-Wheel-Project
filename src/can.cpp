@@ -16,7 +16,7 @@ bool CanInterface::init(){
     pinMode(33,OUTPUT); digitalWrite(33,HIGH);
 
     Can0.begin();
-    Can0.setBaudRate(1000000);
+    Can0.setBaudRate(1000000); //needs to be million to talk with CAN
     Can0.setMaxMB(16);
     Can0.enableFIFO();
     Can0.enableFIFOInterrupt();
@@ -43,7 +43,7 @@ void CanInterface::print_can_sniff(const CAN_message_t &msg){
 void CanInterface::receive_can_updates(const CAN_message_t &msg){
     page currentPage = NextionInterface::getCurrentPage();
     canActive = true;
-    Serial.println(msg.id);
+    //Serial.println(msg.id);
 
 
     if(currentPage != page::DRIVER){
@@ -64,11 +64,10 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
             break;
 
         case 1609:
-            if(msg.buf[0] == 48){
-                // wrote -40 but it might be +40, I'm not sure -Dawson
-                NextionInterface::setOilTemp(msg.buf[1] - 40);
-                NextionInterface::setVoltage(msg.buf[5] * 0.1);
-            }
+            //VERIFIED VOLTAGE FUNCTION
+            Serial.println(msg.id);
+            NextionInterface::setOilTemp(msg.buf[1] - 40);
+            NextionInterface::setVoltage(msg.buf[5] * 0.1);
             break;
 
         // TODO: this doesnt appear on the ECUsensors file, ignoring for now
