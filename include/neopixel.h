@@ -48,43 +48,32 @@ public:
         Serial.println("Rev Lights Initalized");
         ledRPMThresholds = new ledRPMThreshold[NUM_PIXELS]; // INITIALIZE ledRPMThreshold (REQUIRED)
         pixels.begin();// INITIALIZE NeoPixel strip object (REQUIRED)
-        Serial.println("Prong A1");
         pixels.setBrightness(75); // Normal 150
-        Serial.println("Prong A2");
         pixels.clear();
-        Serial.println("Prong A3");
         pixels.show();
-        Serial.println("Prong A4");
-
-        Serial.println("Prong A5");
         
         
         // fill the thresholds array
         for (int i = 8; i < 12; i++) {
             ledRPMThresholds[i].threshold = SHIFT_POINT;
             ledRPMThresholds[i].color = LED_COLOR_BLUE;
-            Serial.println(ledRPMThresholds[i].threshold);
         }
-        Serial.println("Prong A6");
         for (int i = 7; i >= 0; i--) {
             ledRPMThresholds[i].threshold = ledRPMThresholds[i+1].threshold - RPM_DIFFERENCE;
-            Serial.println(ledRPMThresholds[i].threshold);
             if (i >= 4) {
                 ledRPMThresholds[i].color = LED_COLOR_GREEN;
             } else {
                 ledRPMThresholds[i].color = LED_COLOR_YELLOW;
             }
         }
-        Serial.println("Prong A7");
         delay(100);
         updateLights(0);
     }
 
     void static updateLights(int rpm) //DEV NOTE: If this class is failing, it likely means data types arent being initialized
     {   
-        //Serial.println("Prong B1");
+        
         pixels.clear();
-        //Serial.println("Prong B2");
         if(rpm >= REDLINE){ //If RPM past redline set the revlights all to red
             for (int i = 0; i < 12; i++) {
                 pixels.setPixelColor(i, LED_COLOR_RED);
@@ -99,9 +88,8 @@ public:
             }
             
         }
-        //Serial.println("Prong B3");
+    
         pixels.show();
-        //Serial.println("Prong B4");
     }
 };
 

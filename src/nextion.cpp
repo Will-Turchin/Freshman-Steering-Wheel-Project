@@ -2,9 +2,9 @@
 
 page NextionInterface::current_page = page::LOADING;
 
-uint8_t NextionInterface::waterTemp = 0;
-uint8_t NextionInterface::oilTemp = 0;
-uint16_t NextionInterface::oilPressure = 0;
+uint8_t NextionInterface::waterTemp = -1;
+uint8_t NextionInterface::oilTemp = -1;
+uint16_t NextionInterface::oilPressure = -5;
 float NextionInterface::batteryVoltage = 0;
 uint16_t NextionInterface::engineRPM = 0;
 uint8_t NextionInterface::lambda = 0;
@@ -40,25 +40,29 @@ void NextionInterface::setWaterTemp(uint8_t value)
     if(value != waterTemp){
         waterTemp = value;
 
-        String instruction = "watertempvalue.txt=\"" + String(ctof(value), DEC) + " " + char(176) + "F\"";
+        String instruction = "watertempvalue.txt=\"" + String((value), DEC) + " " + char(176) + "F\"";
         sendNextionMessage(instruction);
     }
 }
 
 void NextionInterface::setOilTemp(uint8_t value)
+
 {
     if(value != oilTemp){
         oilTemp = value;
+       
 
-        String instruction = "oiltempvalue.txt=\"" + String(ctof(value), DEC) + " " + char(176) + "F\"";
+        String instruction = "oiltempvalue.txt=\"" + String((value), DEC) + " " + char(176) + "F\"";
         sendNextionMessage(instruction);
     }
 }
 
 void NextionInterface::setOilPressure(uint8_t value, uint8_t value2)
 {
-    float oilPresTemp = (value2 | (value << 8)) * 0.1 * 0.145038;
+   
+    float oilPresTemp = (value2 | (value << 8)) * 0.01;
     if(oilPresTemp != oilPressure){
+        
         oilPressure = oilPresTemp;
         String instruction = "oilpressvalue.txt=\"" + String(oilPressure, DEC) + " PSI\"";
         sendNextionMessage(instruction);
@@ -70,7 +74,7 @@ void NextionInterface::setVoltage(float value)
     if(value != batteryVoltage){
         batteryVoltage = value;
 
-        String instruction = "voltvalue.txt=\"" + String(value, 2) + " V\"";
+        String instruction = "voltvalue.txt=\"" + String(value, 1) + " V\"";
         sendNextionMessage(instruction);
     }
 }
@@ -79,8 +83,9 @@ void NextionInterface::setRPM(uint16_t value)
 {
     if(value != engineRPM){
         engineRPM = value;
+        int roundedValue = (value / 100)*100;
 
-        String instruction = "rpm.txt=\"" + String(value, DEC) + "\"";
+        String instruction = "rpm.txt=\"" + String(roundedValue, DEC) + "\"";
         sendNextionMessage(instruction);
     }   
 }

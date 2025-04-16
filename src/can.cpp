@@ -5,8 +5,15 @@
 
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> CanInterface::Can0;
 
-CanInterface::CanInterface(){}
+CanInterface::CanInterface(){
 
+
+    // uint16_t volt5 = 5000;
+    // uint8_t volt5L = volt5 & 0x00FF;
+    // uint8_t volt5H = volt5 >> 8;
+}
+
+CAN_message_t CanInterface::shift_msg;
 bool CanInterface::canActive = false;
 //static RevLights* lights;
 
@@ -43,7 +50,6 @@ void CanInterface::print_can_sniff(const CAN_message_t &msg){
 void CanInterface::receive_can_updates(const CAN_message_t &msg){
     page currentPage = NextionInterface::getCurrentPage();
     canActive = true;
-    //Serial.println(msg.id);
 
 
     if(currentPage != page::DRIVER){
@@ -53,20 +59,24 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
 
     switch (msg.id){
         case 1600:
-            NextionInterface::setRPM(msg.buf[0] * 100);
-            NextionInterface::setWaterTemp(msg.buf[3]);
-            RevLights::updateLights(msg.buf[0] * 100);
+        //   Serial.println(msg.id);
+            NextionInterface::setRPM((msg.buf[1] | (msg.buf[0] << 8)) );
+            // NextionInterface::setWaterTemp(msg.buf[3]);
+
+
+            RevLights::updateLights((msg.buf[1] | (msg.buf[0] << 8)));
             break;
+        
 
         case 1614:
             // TODO: CHECK LATER
             NextionInterface::setNeutral((msg.buf[4] & 16 ) << 0x10);
             break;
 
-        case 1609:
+        case 0x649:
             //VERIFIED VOLTAGE FUNCTION
-            Serial.println(msg.id);
-            NextionInterface::setOilTemp(msg.buf[1] - 40);
+            NextionInterface::setWaterTemp(msg.buf[0]  +40);
+            NextionInterface::setOilTemp(msg.buf[1] + 40);
             NextionInterface::setVoltage(msg.buf[5] * 0.1);
             break;
 
@@ -124,32 +134,38 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
     }
 }
 
-void CanInterface::send_shift(const bool up, const bool down){
-    CAN_message_t msg;
-    msg.id = 0x07F0;
-    msg.len = 4;
+void CanInterface::send_shift(const bool up, const bool down,const bool button3){
+    shift_msg.id = 0x07F0;
 
-    uint16_t volt5 = 5000;
-    uint8_t volt5L = volt5 & 0x00FF;
-    uint8_t volt5H = volt5 >> 8;
+    shift_msg.len = 6;
 
     if(up){
-        msg.buf[0] = 0x6F;
-        msg.buf[1] = 0x7F;
+        shift_msg.buf[0] = 0x6F;
+        shift_msg.buf[1] = 0x7F;
     } else {
-        msg.buf[0] = 0;
-        msg.buf[1] = 0;
+        shift_msg.buf[0] = 0;
+        shift_msg.buf[1] = 0;
     }
     
     if(down){
-        msg.buf[2] = 0x5F;
-        msg.buf[3] = 0x7F;
+        shift_msg.buf[2] = 0x5F;
+        shift_msg.buf[3] = 0x7F;
     } else {
-        msg.buf[2] = 0;
-        msg.buf[3] = 0;
+        shift_msg.buf[2] = 0;
+        shift_msg.buf[3] = 0;
     }
+
+    if(button3){
+        shift_msg.buf[4] = 0x5F;
+        shift_msg.buf[5] = 0x7F;
+    }else{
+        shift_msg.buf[4] = 0;
+        shift_msg.buf[5] = 0;
+    }
+
+
     
-    Can0.write(msg);
+    Can0.write(shift_msg);
 }
 
 void CanInterface::task(){

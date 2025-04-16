@@ -10,6 +10,7 @@ public:
     CanInterface();
 
     static bool canActive;
+    static CAN_message_t shift_msg;
 
     static FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can0;
 
@@ -19,7 +20,7 @@ public:
 
     static void receive_can_updates(const CAN_message_t &msg);
 
-    static void send_shift(const bool up, const bool down);
+    static void send_shift(const bool up, const bool down,const bool button3);
 
     static void task();
 };
