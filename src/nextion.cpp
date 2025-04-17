@@ -36,12 +36,12 @@ void NextionInterface::sendNextionMessage(String message)
     Serial2.write(0xFF);
 }
 
-void NextionInterface::setWaterTemp(uint8_t value)
+void NextionInterface::setWaterTemp(int value)
 {
     if(value != waterTemp){
         waterTemp = value;
 
-        String instruction = "watertempvalue.txt=\"" + String((value), DEC) + " " + char(176) + "F\"";
+        String instruction = "watertempvalue.txt=\"" + String(ctof(value), DEC) + " " + char(176) + "F\"";
         sendNextionMessage(instruction);
     }
 }
@@ -52,7 +52,7 @@ void NextionInterface::setOilTemp(uint8_t value)
     if(value != oilTemp){
         oilTemp = value;
        
-        String instruction = "oiltempvalue.txt=\"" + String((value), DEC) + " " + char(176) + "F\"";
+        String instruction = "oiltempvalue.txt=\"" + String(ctof(value), DEC) + " " + char(176) + "F\"";
         sendNextionMessage(instruction);
     }
 }
@@ -91,34 +91,21 @@ void NextionInterface::setRPM(uint16_t value)
     }   
 }
 
-void NextionInterface::setGear(const CAN_message_t &msg)
+void NextionInterface::setGear(int numGear)
 {
-    uint16_t engine_output = msg.buf[7] | (msg.buf[6] << 8);
-    uint16_t engine_input = msg.buf[5] | (msg.buf[4] << 8);
-    float gearRatio = (float) engine_input / engine_output;
+    // Serial.println(numGear);
     char newGear;
-
-    if(neutral){
+    if (numGear == 0){
         newGear = 'N';
-    } else if(5.5 < gearRatio && gearRatio < 5.9){
-        newGear = '1';
-    } else if(3.9 < gearRatio && gearRatio < 4.2){
-        newGear = '2';
-    } else if(3.4 < gearRatio && gearRatio < 3.6){
-        newGear = '3';
-    } else if(3.05 < gearRatio && gearRatio < 3.4){
-        newGear = '4';
-    } else if(2.75 < gearRatio && gearRatio < 3.05){
-        newGear = '5';
-    } else if(2.3 < gearRatio && gearRatio < 2.75){
-        newGear = '6';
-    } else {
-        newGear = '?';
+    }else{
+        newGear = '0' + (numGear);
     }
+
 
     if (newGear != gear) {
         gear = newGear;
-        String instruction = "gear.txt=\"" + newGear + '\"';
+        Serial.println(gear);
+        String instruction = "gear.txt=\"" + String(gear) + '\"';
         sendNextionMessage(instruction);
     }
 }
@@ -231,29 +218,29 @@ void NextionInterface::setLambda(float value)
     if (value != lambda) {
         lambda = value;
 
-        float max = 1.5;
-        float high = 1.2;
-        float low = 0.8;
-        float min = 0.5;
-    
-        String instruction = "lambdavalue.txt=\"" + String(value, 2) + " V\"";
+        // float max = 1.5;
+        // float high = 1.2;
+        // float low = 0.8;
+        // float min = 0.5;
+        Serial.println(lambda);
+        String instruction = "lambdabool.txt=\"" + String(value, 3) + " LA\"";
         sendNextionMessage(instruction);
     
-        if (value > max || value < min)
-        {
-            instruction = "lambdavalue.bco=" + String(RGB565_RED, DEC);
-            sendNextionMessage(instruction);
-        }
-        else if (value > high || value < low)
-        {
-            instruction = "lambdavalue.bco=" + String(RGB565_ORANGE, DEC);
-            sendNextionMessage(instruction);
-        }
-        else
-        {
-            instruction = "lambdavalue.bco=" + String(RGB565_GREEN, DEC);
-            sendNextionMessage(instruction);
-        }
+        // if (value > max || value < min)
+        // {
+        //     instruction = "lambdavalue.bco=" + String(RGB565_RED, DEC);
+        //     sendNextionMessage(instruction);
+        // }
+        // else if (value > high || value < low)
+        // {
+        //     instruction = "lambdavalue.bco=" + String(RGB565_ORANGE, DEC);
+        //     sendNextionMessage(instruction);
+        // }
+        // else
+        // {
+        //     instruction = "lambdavalue.bco=" + String(RGB565_GREEN, DEC);
+        //     sendNextionMessage(instruction);
+        // }
     }
 }
 

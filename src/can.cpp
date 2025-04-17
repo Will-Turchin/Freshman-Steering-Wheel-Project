@@ -66,17 +66,19 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
             break;
         
 
-        case 1614:
-            // TODO: CHECK LATER
-            NextionInterface::setNeutral((msg.buf[4] & 16 ) << 0x10);
-            break;
 
         case 0x649:
+
             //VERIFIED VOLTAGE FUNCTION
             //Serial.println("0x649");
-            NextionInterface::setWaterTemp(msg.buf[0]  +40);
-            NextionInterface::setOilTemp(msg.buf[1] + 40);
+            NextionInterface::setWaterTemp(msg.buf[0] -40);
+            NextionInterface::setOilTemp(msg.buf[1] - 40);
             NextionInterface::setVoltage(msg.buf[5] * 0.1);
+            break;
+
+        case 0x64D:
+            NextionInterface::setGear(msg.buf[6] & 0x0F);
+            
             break;
 
         // TODO: this doesnt appear on the ECUsensors file, ignoring for now
@@ -111,16 +113,12 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
             NextionInterface::setOilPressure(msg.buf[6], msg.buf[7]);
             break;
 
-        case 1623:
-            // Once again I assume this works even though it likely does not. -Dawson
-            NextionInterface::setGear(msg);
-            break;
 
         // TODO: machine light indicator (MLI)
 
         // lambda bool
         case 1617:
-            NextionInterface::setLambda(msg.buf[0] * 100);
+            NextionInterface::setLambda(msg.buf[0] * .01);
             break;
 
         case 2047:
