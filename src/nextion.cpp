@@ -4,7 +4,7 @@ page NextionInterface::current_page = page::LOADING;
 
 uint8_t NextionInterface::waterTemp = 1;
 uint8_t NextionInterface::oilTemp = 1;
-uint8_t NextionInterface::oilPressure = 1;
+uint16_t NextionInterface::oilPressure = 1;
 float NextionInterface::batteryVoltage = -1;
 uint16_t NextionInterface::engineRPM = 1;
 float NextionInterface::lambda = -1;
@@ -60,11 +60,12 @@ void NextionInterface::setOilTemp(uint8_t value)
 void NextionInterface::setOilPressure(uint8_t value, uint8_t value2)
 {
     // We're just getting it as an int for now, not even rounding.
-    uint8_t newOilPressure = (value2 | (value << 8)) * 0.01;
+    uint16_t newOilPressure = (((static_cast<uint16_t>(value2)) | (static_cast<uint16_t>(value) << 8)) * 0.0145);
     // get one decimal of precision
     if(oilPressure != newOilPressure){
+        Serial.printf("value: 0x%X 0x%X\n", value, value2);
         oilPressure = newOilPressure;
-        String instruction = "oilpressvalue.txt=\"" + (String) oilPressure + " PSI\"";
+        String instruction = "oilpressvalue.txt=\"" + static_cast<String>(oilPressure) + " PSI\"";
         sendNextionMessage(instruction);
     }
 }

@@ -33,7 +33,7 @@ private:
     static bool neutral;
     static uint8_t waterTemp;
     static uint8_t oilTemp;
-    static uint8_t oilPressure;
+    static uint16_t oilPressure;
     static float batteryVoltage;
     static uint16_t engineRPM;
     static float lambda;
