@@ -33,11 +33,11 @@ private:
     static bool neutral;
     static uint8_t waterTemp;
     static uint8_t oilTemp;
-    static uint16_t oilPressure;
+    static uint8_t oilPressure;
     static float batteryVoltage;
     static uint16_t engineRPM;
-    static uint8_t lambda;
-    static uint8_t gear;
+    static float lambda;
+    static char gear;
 
 public:
     NextionInterface();

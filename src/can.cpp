@@ -62,8 +62,6 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
         //   Serial.println(msg.id);
             NextionInterface::setRPM((msg.buf[1] | (msg.buf[0] << 8)) );
             // NextionInterface::setWaterTemp(msg.buf[3]);
-
-
             RevLights::updateLights((msg.buf[1] | (msg.buf[0] << 8)));
             break;
         
@@ -75,6 +73,7 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
 
         case 0x649:
             //VERIFIED VOLTAGE FUNCTION
+            //Serial.println("0x649");
             NextionInterface::setWaterTemp(msg.buf[0]  +40);
             NextionInterface::setOilTemp(msg.buf[1] + 40);
             NextionInterface::setVoltage(msg.buf[5] * 0.1);
@@ -106,6 +105,7 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
             }
             break;
 
+        // 0x644
         case 1604:
             // The math here is PROBABLY right Im not going to check it -Dawson
             NextionInterface::setOilPressure(msg.buf[6], msg.buf[7]);

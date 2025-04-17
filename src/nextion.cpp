@@ -2,13 +2,13 @@
 
 page NextionInterface::current_page = page::LOADING;
 
-uint8_t NextionInterface::waterTemp = -1;
-uint8_t NextionInterface::oilTemp = -1;
-uint16_t NextionInterface::oilPressure = -5;
-float NextionInterface::batteryVoltage = 0;
-uint16_t NextionInterface::engineRPM = 0;
-uint8_t NextionInterface::lambda = 0;
-uint8_t NextionInterface::gear = 0;
+uint8_t NextionInterface::waterTemp = 1;
+uint8_t NextionInterface::oilTemp = 1;
+uint8_t NextionInterface::oilPressure = 1;
+float NextionInterface::batteryVoltage = -1;
+uint16_t NextionInterface::engineRPM = 1;
+float NextionInterface::lambda = -1;
+char NextionInterface::gear = '?';
 
 bool NextionInterface::neutral = false;
 
@@ -29,6 +29,7 @@ short NextionInterface::ctof(short celsius)
 
 void NextionInterface::sendNextionMessage(String message)
 {
+    Serial.println(message);
     Serial2.print(message);
     Serial2.write(0xFF);
     Serial2.write(0xFF);
@@ -51,7 +52,6 @@ void NextionInterface::setOilTemp(uint8_t value)
     if(value != oilTemp){
         oilTemp = value;
        
-
         String instruction = "oiltempvalue.txt=\"" + String((value), DEC) + " " + char(176) + "F\"";
         sendNextionMessage(instruction);
     }
@@ -59,19 +59,20 @@ void NextionInterface::setOilTemp(uint8_t value)
 
 void NextionInterface::setOilPressure(uint8_t value, uint8_t value2)
 {
-   
-    float oilPresTemp = (value2 | (value << 8)) * 0.01;
-    if(oilPresTemp != oilPressure){
-        
-        oilPressure = oilPresTemp;
-        String instruction = "oilpressvalue.txt=\"" + String(oilPressure, DEC) + " PSI\"";
+    // We're just getting it as an int for now, not even rounding.
+    uint8_t newOilPressure = (value2 | (value << 8)) * 0.01;
+    // get one decimal of precision
+    if(oilPressure != newOilPressure){
+        oilPressure = newOilPressure;
+        String instruction = "oilpressvalue.txt=\"" + (String) oilPressure + " PSI\"";
         sendNextionMessage(instruction);
     }
 }
 
 void NextionInterface::setVoltage(float value)
 {
-    if(value != batteryVoltage){
+    if (value != batteryVoltage) {
+        batteryVoltage = value;
         batteryVoltage = value;
 
         String instruction = "voltvalue.txt=\"" + String(value, 1) + " V\"";
@@ -95,41 +96,44 @@ void NextionInterface::setGear(const CAN_message_t &msg)
     uint16_t engine_output = msg.buf[7] | (msg.buf[6] << 8);
     uint16_t engine_input = msg.buf[5] | (msg.buf[4] << 8);
     float gearRatio = (float) engine_input / engine_output;
+    char newGear;
 
-    if(gear != gearRatio){
-        gear = gearRatio;
+    if(neutral){
+        newGear = 'N';
+    } else if(5.5 < gearRatio && gearRatio < 5.9){
+        newGear = '1';
+    } else if(3.9 < gearRatio && gearRatio < 4.2){
+        newGear = '2';
+    } else if(3.4 < gearRatio && gearRatio < 3.6){
+        newGear = '3';
+    } else if(3.05 < gearRatio && gearRatio < 3.4){
+        newGear = '4';
+    } else if(2.75 < gearRatio && gearRatio < 3.05){
+        newGear = '5';
+    } else if(2.3 < gearRatio && gearRatio < 2.75){
+        newGear = '6';
+    } else {
+        newGear = '?';
+    }
 
-        String instruction = "";
-        if(neutral){
-            instruction = "gear.txt=\"N\"";
-        } else if(5.5 < gearRatio && gearRatio < 5.9){
-            instruction = "gear.txt=\"1\"";
-        } else if(3.9 < gearRatio && gearRatio < 4.2){
-            instruction = "gear.txt=\"2\"";
-        } else if(3.4 < gearRatio && gearRatio < 3.6){
-            instruction = "gear.txt=\"3\"";
-        } else if(3.05 < gearRatio && gearRatio < 3.4){
-            instruction = "gear.txt=\"4\"";
-        } else if(2.75 < gearRatio && gearRatio < 3.05){
-            instruction = "gear.txt=\"5\"";
-        } else if(2.3 < gearRatio && gearRatio < 2.75){
-            instruction = "gear.txt=\"6\"";
-        } 
-
+    if (newGear != gear) {
+        gear = newGear;
+        String instruction = "gear.txt=\"" + newGear + '\"';
         sendNextionMessage(instruction);
-    }   
+    }
 }
 
 void NextionInterface::setButtonImage(String elementName, bool value) {
-    String instruction = "";
 
-    if (value) {
-        instruction = elementName + ".pic=" + String(GREEN_BUTTON_ID, DEC);
-    } else {
-        instruction = elementName + ".pic=" + String(RED_BUTTON_ID, DEC);
-    }
+    // String instruction = "";
 
-    sendNextionMessage(instruction);
+    // if (value) {
+    //     instruction = elementName + ".pic=" + String(GREEN_BUTTON_ID, DEC);
+    // } else {
+    //     instruction = elementName + ".pic=" + String(RED_BUTTON_ID, DEC);
+    // }
+
+    // sendNextionMessage(instruction);
 
 }
 
@@ -224,28 +228,32 @@ void NextionInterface::setWaterPumpValue(bool value)
 
 void NextionInterface::setLambda(float value)
 {
-    float max = 1.5;
-    float high = 1.2;
-    float low = 0.8;
-    float min = 0.5;
+    if (value != lambda) {
+        lambda = value;
 
-    String instruction = "lambdavalue.txt=\"" + String(value, 2) + " V\"";
-    sendNextionMessage(instruction);
-
-    if (value > max || value < min)
-    {
-        instruction = "lambdavalue.bco=" + String(RGB565_RED, DEC);
+        float max = 1.5;
+        float high = 1.2;
+        float low = 0.8;
+        float min = 0.5;
+    
+        String instruction = "lambdavalue.txt=\"" + String(value, 2) + " V\"";
         sendNextionMessage(instruction);
-    }
-    else if (value > high || value < low)
-    {
-        instruction = "lambdavalue.bco=" + String(RGB565_ORANGE, DEC);
-        sendNextionMessage(instruction);
-    }
-    else
-    {
-        instruction = "lambdavalue.bco=" + String(RGB565_GREEN, DEC);
-        sendNextionMessage(instruction);
+    
+        if (value > max || value < min)
+        {
+            instruction = "lambdavalue.bco=" + String(RGB565_RED, DEC);
+            sendNextionMessage(instruction);
+        }
+        else if (value > high || value < low)
+        {
+            instruction = "lambdavalue.bco=" + String(RGB565_ORANGE, DEC);
+            sendNextionMessage(instruction);
+        }
+        else
+        {
+            instruction = "lambdavalue.bco=" + String(RGB565_GREEN, DEC);
+            sendNextionMessage(instruction);
+        }
     }
 }
 
@@ -253,8 +261,9 @@ void NextionInterface::setNeutral(bool value)
 {
     if(value != neutral){
         neutral = value;
-        if(value)
+        if(value) {
             sendNextionMessage("gear.txt=\"N\"");
+        }
     }
 }
 
