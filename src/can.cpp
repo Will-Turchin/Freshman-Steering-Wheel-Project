@@ -6,8 +6,6 @@
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> CanInterface::Can0;
 
 CanInterface::CanInterface(){
-
-
     // uint16_t volt5 = 5000;
     // uint8_t volt5L = volt5 & 0x00FF;
     // uint8_t volt5H = volt5 >> 8;
@@ -64,18 +62,31 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
             // NextionInterface::setWaterTemp(msg.buf[3]);
             RevLights::updateLights((msg.buf[1] | (msg.buf[0] << 8)));
             break;
-        
-
 
         case 0x649:
-
             //VERIFIED VOLTAGE FUNCTION
             //Serial.println("0x649");
             NextionInterface::setWaterTemp(msg.buf[0] -40);
             NextionInterface::setOilTemp(msg.buf[1] - 40);
             NextionInterface::setVoltage(msg.buf[5] * 0.1);
             break;
-
+        
+        case 0x64C: {
+            constexpr uint8_t coolantMask = 0b10000000;
+            constexpr uint8_t oilTempMask = 0b00010000;
+            constexpr uint8_t oilPressureMask = 0b00001000;
+            constexpr uint8_t fuelPressureMask = 0b00000001;
+            bool coolantTempWarning = msg.buf[5] & coolantMask;
+            bool oilTempWarning = msg.buf[5] & oilTempMask;
+            bool oilPressureWarning = msg.buf[5] & oilPressureMask;
+            bool fuelPressureWarning = msg.buf[5] & fuelPressureMask;
+            //if any of these critical warnings true, swap to warning screen
+            if(coolantTempWarning || oilTempWarning || oilPressureWarning || fuelPressureWarning) {
+                NextionInterface::switchToWarning();
+            } else { // otherwise switch to driver screen
+                NextionInterface::switchToDriver();
+            }
+        }    break;
         case 0x64D:
             NextionInterface::setGear(msg.buf[6] & 0x0F);
             
