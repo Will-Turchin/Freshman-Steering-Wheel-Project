@@ -46,13 +46,13 @@ void CanInterface::print_can_sniff(const CAN_message_t &msg){
 }
 
 void CanInterface::receive_can_updates(const CAN_message_t &msg){
-    page currentPage = NextionInterface::getCurrentPage();
+    //page currentPage = NextionInterface::getCurrentPage();
     canActive = true;
 
 
-    if(currentPage != page::DRIVER){
+    /*if(currentPage != page::DRIVER){//code might be an issue
         NextionInterface::switchToDriver();
-    }
+    }*/
 
 
     switch (msg.id){
