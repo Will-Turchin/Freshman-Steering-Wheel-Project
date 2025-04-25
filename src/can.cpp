@@ -80,6 +80,7 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
             bool oilTempWarning = msg.buf[5] & oilTempMask;
             bool oilPressureWarning = msg.buf[5] & oilPressureMask;
             bool fuelPressureWarning = msg.buf[5] & fuelPressureMask;
+
             //if any of these critical warnings true, swap to warning screen
             if(coolantTempWarning || oilTempWarning || oilPressureWarning || fuelPressureWarning) {
                 NextionInterface::switchToWarning();
