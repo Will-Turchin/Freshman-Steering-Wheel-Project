@@ -44,7 +44,7 @@ public:
 
     static void init();
 
-    static void setWaterTemp(uint8_t value);
+    static void setWaterTemp(int value);
 
     static void setOilTemp(uint8_t value);
 
@@ -54,7 +54,7 @@ public:
 
     static void setRPM(uint16_t value);
 
-    static void setGear(const CAN_message_t &msg);
+    static void setGear(int gear);
 
     static void setButtonImage(String elementName, bool value);
 

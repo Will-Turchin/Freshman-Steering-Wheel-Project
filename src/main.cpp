@@ -38,8 +38,9 @@ void setup() {
   CanInterface::init();
 
   RevLights::init();
+  NextionInterface::switchToDriver();
 
-  //timer.begin(shifterCallback, 20000); // 20,000 microseconds = 20 milliseconds = 50 Hz
+  timer.begin(shifterCallback, 20000); // 20,000 microseconds = 20 milliseconds = 50 Hz
   // timer.begin(buttonsCallback,50000);
 }
 
