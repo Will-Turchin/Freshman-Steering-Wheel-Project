@@ -256,31 +256,43 @@ void NextionInterface::setNeutral(bool value)
 
 void NextionInterface::switchToLoading()
 {
-    sendNextionMessage("page loading");
-    current_page = page::LOADING;
+    if(current_page != page::LOADING){
+        sendNextionMessage("page loading");
+        current_page = page::LOADING;
+    }
+    
 }
 
 void NextionInterface::switchToStartUp()
 {
-    sendNextionMessage("page startup");
-    current_page = page::STARTUP;
+    if(current_page!= page::STARTUP){
+        sendNextionMessage("page startup");
+        current_page = page::STARTUP;
+    }
 }
 
 void NextionInterface::switchToDriver()
 {
-    sendNextionMessage("page driver");
-    current_page = page::DRIVER;
+    if(current_page!= page::DRIVER){
+        sendNextionMessage("page driver");
+        current_page = page::DRIVER;
+    }
 }
 
 void NextionInterface::switchToYippee()
 {
-    sendNextionMessage("page yippee");
-    current_page = page::YIPPEE;
+    if(current_page != page::YIPPEE){
+        sendNextionMessage("page yippee");
+        current_page = page::YIPPEE;
+    }
+    
 }
 
 void NextionInterface::switchToWarning() {
-    sendNextionMessage("page warning");
-    current_page = page::WARNING;
+    if(current_page != page::WARNING){
+        sendNextionMessage("page warning");
+        current_page = page::WARNING;
+    }
 }
 
 
