@@ -78,12 +78,12 @@ public:
             for (int i = 0; i < 12; i++) {
                 pixels.setPixelColor(i, LED_COLOR_RED);
             }
-        } else if(rpm ==0){
+        } else if(rpm == 0){
             for (int i = 0; i < NUM_PIXELS; i++) {
                 pixels.setPixelColor(i, LED_COLOR_GREEN);
             }
-            pixels.show();
-            pixels.clear();
+            //pixels.show();
+            //pixels.clear();
         } else {
             for (int i = 0; i < 12; i++) { //checks each led threshold, if met sets it to it's color
                 if (rpm >= ledRPMThresholds[i].threshold) {
