@@ -39,6 +39,7 @@ private:
     static float lambda;
     static char gear;
 
+    static uint16_t currentMessage;
 public:
     NextionInterface();
 
@@ -51,6 +52,8 @@ public:
     static void setOilPressure(uint8_t value, uint8_t value2);
 
     static void setVoltage(float value);
+
+    static void setDriverMessage(uint16_t value);
 
     static void setRPM(uint16_t value);
 

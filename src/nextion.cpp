@@ -10,6 +10,8 @@ uint16_t NextionInterface::engineRPM = 1;
 float NextionInterface::lambda = -1;
 char NextionInterface::gear = '?';
 
+uint16_t NextionInterface::currentMessage = 0;
+
 bool NextionInterface::neutral = false;
 
 NextionInterface::NextionInterface() {}
@@ -81,6 +83,15 @@ void NextionInterface::setVoltage(float value)
     }
 }
 
+void NextionInterface::setDriverMessage(uint16_t value)
+{
+    if(value != currentMessage) {
+        currentMessage = value;
+
+        String instruction = "MessageDriver.txt=\"" + String(value, 1) + "\"";
+        sendNextionMessage(instruction);
+    }
+}
 void NextionInterface::setRPM(uint16_t value)
 {
     if(value != engineRPM){

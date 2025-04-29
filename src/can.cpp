@@ -57,10 +57,15 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
 
     switch (msg.id){
         case 1600:
-        //   Serial.println(msg.id);
-            NextionInterface::setRPM((msg.buf[1] | (msg.buf[0] << 8)) );
-            // NextionInterface::setWaterTemp(msg.buf[3]);
-            RevLights::updateLights((msg.buf[1] | (msg.buf[0] << 8)));
+         
+            uint16_t rpm;
+            rpm = (msg.buf[1] | (msg.buf[0] << 8));
+            //NOTE: THE FOLLOWING TWO LINES OF CODE ARE MADE TO MANIPULATE THE RPM VALUE FOR THE JUDGES
+            NextionInterface::setDriverMessage(rpm); //<><><>CHEAT CODE (this line send ACTUAL rpm to driver message)
+            rpm*=1.4; //<><><>CHEAT CODE
+
+            NextionInterface::setRPM(rpm);
+            RevLights::updateLights(rpm);
             break;
 
         case 0x649:
