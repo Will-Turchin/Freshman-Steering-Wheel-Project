@@ -4,8 +4,7 @@
 #define NEOPIXEL_H
 
 
-class RevLights
-{
+class RevLights {
 private:
     constexpr static const int LED_PINS = 26;
     constexpr static const int NUM_PIXELS = 12;
@@ -82,8 +81,6 @@ public:
             for (int i = 0; i < NUM_PIXELS; i++) {
                 pixels.setPixelColor(i, LED_COLOR_GREEN);
             }
-            //pixels.show();
-            //pixels.clear();
         } else {
             for (int i = 0; i < 12; i++) { //checks each led threshold, if met sets it to it's color
                 if (rpm >= ledRPMThresholds[i].threshold) {
@@ -94,7 +91,6 @@ public:
             }
             
         }
-    
         pixels.show();
     }
 };

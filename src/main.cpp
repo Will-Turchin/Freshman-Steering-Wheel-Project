@@ -3,8 +3,6 @@
 
 #include <IntervalTimer.h>
 
-/* Start of V2 of code */
-
 // Define the callback function
 void shifterCallback(); 
 void buttonsCallback();
@@ -30,7 +28,6 @@ void setup() {
   delay(8000);
   Serial.begin(9600);
 
-
   Serial.println("Starting nextion interface");
   NextionInterface::init(); // Creates Serial Port to Display
   Serial.println("Nextion interface initialized.");
@@ -41,7 +38,6 @@ void setup() {
   NextionInterface::switchToDriver();
 
   timer.begin(shifterCallback, 20000); // 20,000 microseconds = 20 milliseconds = 50 Hz
-  // timer.begin(buttonsCallback,50000);
 }
 
 void loop() {
@@ -78,6 +74,8 @@ void shifterCallback() { // This function will be called every 20 milliseconds (
 }
 
 void buttonsCallback(){
+  // deprecated function, use this to test button input on steering wheel
+
   // if(digitalRead(button3)){
   //   if (NextionInterface::getCurrentPage() == YIPPEE){
   //       NextionInterface::switchToDriver();

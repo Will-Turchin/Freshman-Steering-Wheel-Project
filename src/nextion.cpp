@@ -16,21 +16,18 @@ bool NextionInterface::neutral = false;
 
 NextionInterface::NextionInterface() {}
 
-void NextionInterface::init()
-{
+void NextionInterface::init() {
     Serial2.begin(9600);
     delay(200);
     Serial.println("Nextion Setup");
     switchToLoading();
 }
 
-short NextionInterface::ctof(short celsius)
-{
+short NextionInterface::ctof(short celsius) {
     return (celsius * 9 / 5) + 32;
 }
 
-void NextionInterface::sendNextionMessage(String message)
-{
+void NextionInterface::sendNextionMessage(String message) {
     Serial.println(message);
     Serial2.print(message);
     Serial2.write(0xFF);
@@ -38,8 +35,7 @@ void NextionInterface::sendNextionMessage(String message)
     Serial2.write(0xFF);
 }
 
-void NextionInterface::setWaterTemp(int value)
-{
+void NextionInterface::setWaterTemp(int value) {
     if(value != waterTemp){
         waterTemp = value;
 
@@ -48,20 +44,16 @@ void NextionInterface::setWaterTemp(int value)
     }
 }
 
-void NextionInterface::setOilTemp(uint8_t value)
-
-{
+void NextionInterface::setOilTemp(uint8_t value) {
     if(value != oilTemp){
         oilTemp = value;
-       
+
         String instruction = "oiltempvalue.txt=\"" + String(ctof(value), DEC) + " " + char(176) + "F\"";
         sendNextionMessage(instruction);
     }
 }
 
-void NextionInterface::setOilPressure(uint8_t value, uint8_t value2)
-{
-    // We're just getting it as an int for now, not even rounding.
+void NextionInterface::setOilPressure(uint8_t value, uint8_t value2) {
     uint16_t newOilPressure = (((static_cast<uint16_t>(value2)) | (static_cast<uint16_t>(value) << 8)) * 0.0145);
     // get one decimal of precision
     if(oilPressure != newOilPressure){
@@ -72,8 +64,7 @@ void NextionInterface::setOilPressure(uint8_t value, uint8_t value2)
     }
 }
 
-void NextionInterface::setVoltage(float value)
-{
+void NextionInterface::setVoltage(float value) {
     if (value != batteryVoltage) {
         batteryVoltage = value;
         batteryVoltage = value;
@@ -83,8 +74,7 @@ void NextionInterface::setVoltage(float value)
     }
 }
 
-void NextionInterface::setDriverMessage(uint16_t value)
-{
+void NextionInterface::setDriverMessage(uint16_t value) {
     if(value != currentMessage) {
         currentMessage = value;
 
@@ -92,8 +82,7 @@ void NextionInterface::setDriverMessage(uint16_t value)
         sendNextionMessage(instruction);
     }
 }
-void NextionInterface::setRPM(uint16_t value)
-{
+void NextionInterface::setRPM(uint16_t value) {
     if(value != engineRPM){
         engineRPM = value;
         int roundedValue = (value / 100)*100;
@@ -103,9 +92,7 @@ void NextionInterface::setRPM(uint16_t value)
     }   
 }
 
-void NextionInterface::setGear(int numGear)
-{
-    // Serial.println(numGear);
+void NextionInterface::setGear(int numGear) {
     char newGear;
     if (numGear == 0){
         newGear = 'N';
@@ -123,6 +110,7 @@ void NextionInterface::setGear(int numGear)
 }
 
 void NextionInterface::setButtonImage(String elementName, bool value) {
+    // deprecated function, used to set warning buttons on driver screen
 
     // String instruction = "";
 
@@ -133,21 +121,17 @@ void NextionInterface::setButtonImage(String elementName, bool value) {
     // }
 
     // sendNextionMessage(instruction);
-
 }
 
-void NextionInterface::setFuelPumpBool(bool value)
-{
+void NextionInterface::setFuelPumpBool(bool value) {
     setButtonImage("fuelpumpbool", value);
 }
 
-void NextionInterface::setFanBool(bool value)
-{
+void NextionInterface::setFanBool(bool value) {
     setButtonImage("fanbool", value);
 }
 
-void NextionInterface::setWaterPumpBool(bool value)
-{
+void NextionInterface::setWaterPumpBool(bool value) {
     setButtonImage("waterpumpbool", value);
 }
 
@@ -159,77 +143,10 @@ void NextionInterface::setMessageBool(bool value) {
     setButtonImage("messagebool", value);
 }
 
-void NextionInterface::setFuelPumpValue(bool value)
-{
-//     String instruction = "";
-
-//     if (value)
-//     {
-//         instruction = "fuelpumpvalue.bco=" + String(RGB565_GREEN, DEC);
-//         sendNextionMessage(instruction);
-
-//         instruction = "fuelpumpvalue.txt=\"ON\"";
-//         sendNextionMessage(instruction);
-//     }
-//     else
-//     {
-//         instruction = "fuelpumpvalue.bco=" + String(RGB565_RED, DEC);
-//         sendNextionMessage(instruction);
-
-//         instruction = "fuelpumpvalue.txt=\"OFF\"";
-//         sendNextionMessage(instruction);
-//     }
-}
-
-void NextionInterface::setFanValue(bool value)
-{
-//     // String instruction = "";
-
-//     // if (value)
-//     // {
-//     //     instruction = "fanvalue.bco=" + String(RGB565_GREEN, DEC);
-//     //     sendNextionMessage(instruction);
-
-//     //     instruction = "fanvalue.txt=\"ON\"";
-//     //     sendNextionMessage(instruction);
-//     // }
-//     // else
-//     // {
-//     //     instruction = "fanvalue.bco=" + String(RGB565_RED, DEC);
-//     //     sendNextionMessage(instruction);
-
-//     //     instruction = "fanvalue.txt=\"OFF\"";
-//     //     sendNextionMessage(instruction);
-//     // }
-}
-
-void NextionInterface::setWaterPumpValue(bool value)
-{
-//     // String instruction = "";
-
-//     // if (value)
-//     // {
-//     //     instruction = "waterpumpvalue.bco=" + String(RGB565_GREEN, DEC);
-//     //     sendNextionMessage(instruction);
-
-//     //     instruction = "waterpumpvalue.txt=\"ON\"";
-//     //     sendNextionMessage(instruction);
-//     // }
-//     // else
-//     // {
-//     //     instruction = "waterpumpvalue.bco=" + String(RGB565_RED, DEC);
-//     //     sendNextionMessage(instruction);
-
-//     //     instruction = "waterpumpvalue.txt=\"OFF\"";
-//     //     sendNextionMessage(instruction);
-//     // }
-}
-
-void NextionInterface::setLambda(float value)
-{
+void NextionInterface::setLambda(float value) {
     if (value != lambda) {
         lambda = value;
-
+        // to give context, these are values from Powertrain
         // float max = 1.5;
         // float high = 1.2;
         // float low = 0.8;
@@ -237,27 +154,10 @@ void NextionInterface::setLambda(float value)
         Serial.println(lambda);
         String instruction = "lambdabool.txt=\"" + String(value, 3) + " LA\"";
         sendNextionMessage(instruction);
-    
-        // if (value > max || value < min)
-        // {
-        //     instruction = "lambdavalue.bco=" + String(RGB565_RED, DEC);
-        //     sendNextionMessage(instruction);
-        // }
-        // else if (value > high || value < low)
-        // {
-        //     instruction = "lambdavalue.bco=" + String(RGB565_ORANGE, DEC);
-        //     sendNextionMessage(instruction);
-        // }
-        // else
-        // {
-        //     instruction = "lambdavalue.bco=" + String(RGB565_GREEN, DEC);
-        //     sendNextionMessage(instruction);
-        // }
     }
 }
 
-void NextionInterface::setNeutral(bool value)
-{
+void NextionInterface::setNeutral(bool value) {
     if(value != neutral){
         neutral = value;
         if(value) {
@@ -266,49 +166,35 @@ void NextionInterface::setNeutral(bool value)
     }
 }
 
-void NextionInterface::switchToLoading()
-{
+/*
+The following switch the pages of the screen, fil in each of them
+The first is given as an example
+*/
+
+void NextionInterface::switchToLoading() {
     if(current_page != page::LOADING){
         sendNextionMessage("page loading");
         current_page = page::LOADING;
-    }
-    
+    }  
 }
 
-void NextionInterface::switchToStartUp()
-{
-    if(current_page!= page::STARTUP){
-        sendNextionMessage("page startup");
-        current_page = page::STARTUP;
-    }
+void NextionInterface::switchToStartUp() {
+    @WARNING
 }
 
-void NextionInterface::switchToDriver()
-{
-    if(current_page!= page::DRIVER){
-        sendNextionMessage("page driver");
-        current_page = page::DRIVER;
-    }
+void NextionInterface::switchToDriver() {
+    @WARNING
 }
 
-void NextionInterface::switchToYippee()
-{
-    if(current_page != page::YIPPEE){
-        sendNextionMessage("page yippee");
-        current_page = page::YIPPEE;
-    }
-    
+void NextionInterface::switchToYippee() {
+    @WARNING
 }
 
 void NextionInterface::switchToWarning() {
-    if(current_page != page::WARNING){
-        sendNextionMessage("page warning");
-        current_page = page::WARNING;
-    }
+    @WARNING
 }
 
 
-page NextionInterface::getCurrentPage()
-{
-    return current_page;
+page NextionInterface::getCurrentPage() {
+    @WARNING
 }
