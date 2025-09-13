@@ -90,7 +90,7 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg) {
             break;
         case 1604:
             // OilPressure
-            
+            NextionInterface::setOilPressure(msg.buf[6] | msg.buf[7]);
             break;
         // TODO: machine light indicator (MLI)
         case 1617:
