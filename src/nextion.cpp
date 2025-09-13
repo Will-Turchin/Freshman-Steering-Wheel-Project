@@ -1,7 +1,7 @@
 #include "nextion.h"
-
+//Inits Nextion as Loading Screen
 page NextionInterface::current_page = page::LOADING;
-
+//Sets initial value
 uint8_t NextionInterface::waterTemp = 1;
 uint8_t NextionInterface::oilTemp = 1;
 uint16_t NextionInterface::oilPressure = 1;
@@ -22,11 +22,11 @@ void NextionInterface::init() {
     Serial.println("Nextion Setup");
     switchToLoading();
 }
-
+//Converts the given value from Celsius to Farenheight
 short NextionInterface::ctof(short celsius) {
     return (celsius * 9 / 5) + 32;
 }
-
+//Sends Message to message
 void NextionInterface::sendNextionMessage(String message) {
     Serial.println(message);
     Serial2.print(message);
@@ -34,7 +34,7 @@ void NextionInterface::sendNextionMessage(String message) {
     Serial2.write(0xFF);
     Serial2.write(0xFF);
 }
-
+//Sets the Water Temp on Screen
 void NextionInterface::setWaterTemp(int value) {
     if(value != waterTemp){
         waterTemp = value;
@@ -43,7 +43,7 @@ void NextionInterface::setWaterTemp(int value) {
         sendNextionMessage(instruction);
     }
 }
-
+//Set Oil Temp
 void NextionInterface::setOilTemp(uint8_t value) {
     if(value != oilTemp){
         oilTemp = value;
@@ -52,7 +52,7 @@ void NextionInterface::setOilTemp(uint8_t value) {
         sendNextionMessage(instruction);
     }
 }
-
+//Set Oil Pressure and send string
 void NextionInterface::setOilPressure(uint8_t value, uint8_t value2) {
     uint16_t newOilPressure = (((static_cast<uint16_t>(value2)) | (static_cast<uint16_t>(value) << 8)) * 0.0145);
     // get one decimal of precision
@@ -63,7 +63,7 @@ void NextionInterface::setOilPressure(uint8_t value, uint8_t value2) {
         sendNextionMessage(instruction);
     }
 }
-
+//Sets voltage for current screen would have to be multiplied by 100
 void NextionInterface::setVoltage(float value) {
     if (value != batteryVoltage) {
         batteryVoltage = value;
@@ -73,7 +73,7 @@ void NextionInterface::setVoltage(float value) {
         sendNextionMessage(instruction);
     }
 }
-
+//Send a message to the driver
 void NextionInterface::setDriverMessage(uint16_t value) {
     if(value != currentMessage) {
         currentMessage = value;
@@ -82,6 +82,7 @@ void NextionInterface::setDriverMessage(uint16_t value) {
         sendNextionMessage(instruction);
     }
 }
+//Set the RPM on the screen
 void NextionInterface::setRPM(uint16_t value) {
     if(value != engineRPM){
         engineRPM = value;
@@ -91,7 +92,7 @@ void NextionInterface::setRPM(uint16_t value) {
         sendNextionMessage(instruction);
     }   
 }
-
+//Set Gear level  can remove and fix nextion screen
 void NextionInterface::setGear(int numGear) {
     char newGear;
     if (numGear == 0){
@@ -108,7 +109,7 @@ void NextionInterface::setGear(int numGear) {
         sendNextionMessage(instruction);
     }
 }
-
+//Not NEEDED
 void NextionInterface::setButtonImage(String elementName, bool value) {
     // deprecated function, used to set warning buttons on driver screen
 

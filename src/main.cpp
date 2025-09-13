@@ -18,6 +18,7 @@ int const button5 = 6;
 int const button6 = 9;
 
 void setup() {
+  //Inits buttons
   pinMode(shiftUp, INPUT_PULLUP);
   pinMode(shiftDown, INPUT_PULLUP);
   pinMode(button3,INPUT_PULLUP);
@@ -27,20 +28,22 @@ void setup() {
   
   delay(8000);
   Serial.begin(9600);
-
+  //Starts Nextion
   Serial.println("Starting nextion interface");
   NextionInterface::init(); // Creates Serial Port to Display
   Serial.println("Nextion interface initialized.");
-
+  //Start Can
   CanInterface::init();
-
+  //Starts Rev Lights
   RevLights::init();
+  //Switches to the driver screen
   NextionInterface::switchToDriver();
 
   timer.begin(shifterCallback, 20000); // 20,000 microseconds = 20 milliseconds = 50 Hz
 }
 
 void loop() {
+  //Updates Can
   CanInterface::task();
 }
 
