@@ -13,7 +13,6 @@ CAN_message_t CanInterface::shift_msg;
 bool CanInterface::canActive = false;
 
 bool CanInterface::init(){
-    // pinMode(6, OUTPUT); digitalWrite(6, LOW); /* optional tranceiver enable pin */
     pinMode(32,OUTPUT); digitalWrite(32,HIGH);
     pinMode(33,OUTPUT); digitalWrite(33,HIGH);
 
@@ -40,8 +39,7 @@ void CanInterface::print_can_sniff(const CAN_message_t &msg){
     Serial.println();
 }
 
-void CanInterface::receive_can_updates(const CAN_message_t &msg){
-    //page currentPage = NextionInterface::getCurrentPage();
+void CanInterface::receive_can_updates(const CAN_message_t &msg) {
     canActive = true;
 
 
@@ -65,7 +63,7 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
         case 0x64C:
             //coolantTempWarning, oilTempWarning, oilPressureWarning, fuelPressureWarning
 
-            /*if(any of the warnings) {
+            /*if (any of the warnings) {
                 NextionInterface::switchToWarning();
             } else { // otherwise switch to driver screen
                 NextionInterface::switchToDriver();
@@ -78,7 +76,7 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
             // WaterPump, FuelPump, Fan
             break;
         case 1604:
-            // OilPressur
+            // OilPressure
             break;
         // TODO: machine light indicator (MLI)
         case 1617:
@@ -92,40 +90,6 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg){
         default:
             break;
     }
-}
-
-
-void CanInterface::send_shift(const bool up, const bool down,const bool button3){
-    //DO NOT TOUCH THIS CODE
-    shift_msg.id = 0x07F0;
-
-    shift_msg.len = 6;
-
-    if(up){
-        shift_msg.buf[0] = 0x6F;
-        shift_msg.buf[1] = 0x7F;
-    } else {
-        shift_msg.buf[0] = 0;
-        shift_msg.buf[1] = 0;
-    }
-    
-    if(down){
-        shift_msg.buf[2] = 0x5F;
-        shift_msg.buf[3] = 0x7F;
-    } else {
-        shift_msg.buf[2] = 0;
-        shift_msg.buf[3] = 0;
-    }
-
-    if(button3){
-        shift_msg.buf[4] = 0x5F;
-        shift_msg.buf[5] = 0x7F;
-    }else{
-        shift_msg.buf[4] = 0;
-        shift_msg.buf[5] = 0;
-    }
-
-    Can0.write(shift_msg);
 }
 
 void CanInterface::task(){
