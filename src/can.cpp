@@ -75,14 +75,14 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg) {
             constexpr uint8_t oilPressureMask = 0b00010000;
             constexpr uint8_t fuelPressureMask = 0b01000000;
             uint8_t warnByte = msg.buf[5];
-             if(warnByte && (coolantMask || oilTempMask || oilPressureMask || fuelPressureMask)) {
+             if(warnByte & (coolantMask || oilTempMask || oilPressureMask || fuelPressureMask)) {
                 NextionInterface::switchToWarning();
             } else { // otherwise switch to driver screen
                 NextionInterface::switchToDriver();
             }
             break;
         case 1613:
-            NextionInterface::setGear(msg.buf[6] & 0x0F);
+            NextionInterface::setGear(msg.buf[6] & 15);
             break;
         case 1284:
             // WaterPump, FuelPump, Fan
@@ -90,11 +90,12 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg) {
             break;
         case 1604:
             // OilPressure
-            NextionInterface::setOilPressure(msg.buf[6] | msg.buf[7]);
+            NextionInterface::setOilPressure(msg.buf[6], msg.buf[7]);
             break;
         // TODO: machine light indicator (MLI)
         case 1617:
             //lambda
+            NextionInterface::setLambda(msg.buf[0]);
             break;
         case 2047:
             // this is for warnings. if any value is greater than 0 it's big bad
