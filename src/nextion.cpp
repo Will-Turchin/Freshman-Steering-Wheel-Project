@@ -173,7 +173,7 @@ void NextionInterface::setNeutral(bool value) {
 void NextionInterface::setSpeed(int value){
     if(prevmph != value){
         prevmph = value;
-        String instruction = "speedVar.txt=\"" + String(value, DEC) + "\"";
+        String instruction = "speedVar.txt=\"" + String(value, DEC) + " MPH" + "\"";
     }
 }
 

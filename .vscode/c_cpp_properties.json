@@ -8,11 +8,11 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "C:/Mines Formula/SteeringWheel/Freshman-Steering-Wheel-Project/include",
-                "C:/Mines Formula/SteeringWheel/Freshman-Steering-Wheel-Project/src",
+                "C:/Mines Formula/Freshman-Steering-Wheel-Project/include",
+                "C:/Mines Formula/Freshman-Steering-Wheel-Project/src",
                 "C:/Users/gauge/.platformio/packages/framework-arduinoteensy/libraries/FlexCAN_T4",
                 "C:/Users/gauge/.platformio/packages/framework-arduinoteensy/libraries/Adafruit_NeoPixel",
-                "C:/Mines Formula/SteeringWheel/Freshman-Steering-Wheel-Project/.pio/libdeps/teensymm/SparkFun u-blox GNSS v3/src",
+                "C:/Mines Formula/Freshman-Steering-Wheel-Project/.pio/libdeps/teensymm/SparkFun u-blox GNSS v3/src",
                 "C:/Users/gauge/.platformio/packages/framework-arduinoteensy/libraries/Wire",
                 "C:/Users/gauge/.platformio/packages/framework-arduinoteensy/libraries/Wire/utility",
                 "C:/Users/gauge/.platformio/packages/framework-arduinoteensy/libraries/SPI",
@@ -116,11 +116,11 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "C:/Mines Formula/SteeringWheel/Freshman-Steering-Wheel-Project/include",
-                    "C:/Mines Formula/SteeringWheel/Freshman-Steering-Wheel-Project/src",
+                    "C:/Mines Formula/Freshman-Steering-Wheel-Project/include",
+                    "C:/Mines Formula/Freshman-Steering-Wheel-Project/src",
                     "C:/Users/gauge/.platformio/packages/framework-arduinoteensy/libraries/FlexCAN_T4",
                     "C:/Users/gauge/.platformio/packages/framework-arduinoteensy/libraries/Adafruit_NeoPixel",
-                    "C:/Mines Formula/SteeringWheel/Freshman-Steering-Wheel-Project/.pio/libdeps/teensymm/SparkFun u-blox GNSS v3/src",
+                    "C:/Mines Formula/Freshman-Steering-Wheel-Project/.pio/libdeps/teensymm/SparkFun u-blox GNSS v3/src",
                     "C:/Users/gauge/.platformio/packages/framework-arduinoteensy/libraries/Wire",
                     "C:/Users/gauge/.platformio/packages/framework-arduinoteensy/libraries/Wire/utility",
                     "C:/Users/gauge/.platformio/packages/framework-arduinoteensy/libraries/SPI",
