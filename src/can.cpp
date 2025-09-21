@@ -46,21 +46,23 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg) {
     switch (msg.id) {
         // 1600: RPM
         case 1600: {
-            uint16_t rpm = (static_cast<uint16_t>(msg.buf[0]) << 8) | msg.buf[1];
-            uint16_t speed = (static_cast<uint16_t> (msg.buf[2]));
+            uint16_t rpm = ((msg.buf[0] << 8) | msg.buf[1]);
+            uint16_t speed = (msg.buf[2]);
             NextionInterface::setRPM(rpm);
             NextionInterface::setSpeed(speed);
             RevLights::updateLights(rpm);
-            break;
         }
+            break;
+        
 
         // 1609: Temps & Voltage
         case 1609: {
-            NextionInterface::setWaterTemp(static_cast<int16_t>(msg.buf[0]) - 40);
-            NextionInterface::setOilTemp(static_cast<int16_t>(msg.buf[1]) - 40);
-            NextionInterface::setVoltage(static_cast<float>(msg.buf[5]) * 0.1f);
-            break;
+            NextionInterface::setWaterTemp(msg.buf[0] - 40);
+            NextionInterface::setOilTemp(msg.buf[1] - 40);
+            NextionInterface::setVoltage(msg.buf[5] * 0.1f);
         }
+            break;
+        
 
         // 1612: Warning flags
         case 1612: {
@@ -79,14 +81,16 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg) {
             } else {
                 NextionInterface::switchToDriver();
             }
-            break;
         }
+            break;
+        
 
         // 1613: Gear
         case 1613: {
             NextionInterface::setGear(msg.buf[6] & 15);
-            break;
         }
+            break;
+        
 
         // 1284: WaterPump, FuelPump, Fan (fill in as needed)
         case 1284: {
@@ -111,39 +115,35 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg) {
                 else
                     Serial.println("Fan Error");
             }
-            break;
-            break; // keep break inside the case block
         }
-
+            break;
+        
+  // keep break inside the case block
         // 1604: Oil Pressure
         case 1604: {
             // OilPressure is carried in bytes 6..7; header expects two uint8_t args
             NextionInterface::setOilPressure(msg.buf[6], msg.buf[7]);
             // TODO: machine light indicator (MLI)
-            break;
         }
+            break;
+        
 
         // 1617: Lambda
-        case 1617: {
+        case 1617: 
             NextionInterface::setLambda(msg.buf[0]);
             break;
-        }
+        
 
         // 2047: “Any warnings present” message
-        case 2047: {
-            bool anyNonZero = false;
-            for (uint8_t i = 0; i < msg.len; ++i) {
-                if (msg.buf[i] != 0) { anyNonZero = true; break; }
+        case 2047: 
+            if(msg.buf != 0){
+                
             }
-            if (anyNonZero) {
-                // TODO: handle global warning
-            }
-            break;
-        }
+        
 
-        default: {
+        default: 
             break;
-        }
+        
     }
 }
 void CanInterface::send_shift(const bool up, const bool down,const bool button3){
