@@ -104,12 +104,13 @@ void NextionInterface::setDriverMessage(uint16_t value) {
     if(value != currentMessage) {
         currentMessage = value;
 
-        String instruction = "messageDriver.txt=\"" + String(value, 1) + "\"";
+        String instruction = "messageDriver.txt=\"" + String(value) + "\"";
         sendNextionMessage(instruction);
     }
 }
 //Set the RPM on the screen
 void NextionInterface::setRPM(uint16_t value) {
+    value = kmhtomph(value);
     if(value != engineRPM){
         engineRPM = value;
         int roundedValue = (value / 100)*100;
@@ -140,17 +141,15 @@ void NextionInterface::setGear(int numGear) {
         sendNextionMessage(instruction);
     }
 }
-int NextionInterface::image = -1;
 void NextionInterface::setButtonImage(String elementName, bool value) {
 
     String instruction = "";
     
-    if (value && image != GREEN_BUTTON_ID) {
-        instruction = elementName + ".pic=" + String(GREEN_BUTTON_ID, DEC);
-        image = GREEN_BUTTON_ID;
-    } else if(image != RED_BUTTON_ID) {
-        instruction = elementName + ".pic=" + String(RED_BUTTON_ID, DEC);
-        image = RED_BUTTON_ID;
+    if (!value) {
+        instruction = elementName + ".pic=" + String(RED_BUTTON_ID);
+
+    } else{
+        instruction = elementName + ".pic=" + String(GREEN_BUTTON_ID);
     }
 
     sendNextionMessage(instruction);

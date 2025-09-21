@@ -16,7 +16,7 @@ enum page
 
 class NextionInterface
 {
-public:
+private:
     static short ctof(short celsius);
     static short kmhtomph(short kmh);
     static page current_page;

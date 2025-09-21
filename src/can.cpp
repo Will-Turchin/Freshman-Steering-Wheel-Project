@@ -47,7 +47,7 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg) {
         // 1600: RPM
         case 1600: {
             uint16_t rpm = (static_cast<uint16_t>(msg.buf[0]) << 8) | msg.buf[1];
-            uint16_t speed = NextionInterface::kmhtomph((static_cast<uint16_t> (msg.buf[2])));
+            uint16_t speed = (static_cast<uint16_t> (msg.buf[2]));
             NextionInterface::setRPM(rpm);
             NextionInterface::setSpeed(speed);
             RevLights::updateLights(rpm);
@@ -65,16 +65,16 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg) {
         // 1612: Warning flags
         case 1612: {
             // Bit masks (byte 5)
-            constexpr uint8_t coolantMask     = 0b00000001; // bit 0
-            constexpr uint8_t oilTempMask     = 0b00001000; // bit 3
-            constexpr uint8_t oilPressureMask = 0b00010000; // bit 4
-            constexpr uint8_t fuelPressureMask= 0b01000000; // bit 6
+            constexpr uint8_t coolantMask     = 0b10000000; // bit 0
+            constexpr uint8_t oilTempMask     = 0b00010000; // bit 3
+            constexpr uint8_t oilPressureMask = 0b00001000; // bit 4
+            constexpr uint8_t fuelPressureMask= 0b00000001; // bit 6
+            bool coolantTempWarning = msg.buf[5] & coolantMask;
+            bool oilTempWarning = msg.buf[5] & oilTempMask;
+            bool oilPressureWarning = msg.buf[5] & oilPressureMask;
+            bool fuelPressureWarning = msg.buf[5] & fuelPressureMask;            
 
-            uint8_t warnByte = msg.buf[5];
-            // Use bitwise OR, NOT logical OR.
-            const uint8_t anyWarnMask = (coolantMask | oilTempMask | oilPressureMask | fuelPressureMask);
-
-            if (warnByte & anyWarnMask) {
+            if (coolantTempWarning || oilTempWarning || oilPressureWarning || fuelPressureWarning) {
                 NextionInterface::switchToWarning();
             } else {
                 NextionInterface::switchToDriver();
