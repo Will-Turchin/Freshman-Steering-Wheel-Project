@@ -16,9 +16,9 @@ enum page
 
 class NextionInterface
 {
-private:
+public:
     static short ctof(short celsius);
-
+    static short kmhtomph(short kmh);
     static page current_page;
 
     static void sendNextionMessage(String message);
@@ -31,6 +31,17 @@ private:
     static int const GREEN_BUTTON_ID = 85;
     static int const RED_BUTTON_ID = 84;
     
+    static bool startupWaterTemp;
+    static bool startupWaterPump;
+    static bool startupOilTemp;
+    static bool startupOilPump;
+    static bool startupVoltage;
+    static bool startupRPM;
+    static bool startupSpeed;
+    static bool startupFuelPump;
+    static bool startupFan;
+    static bool startupMLI;
+    static bool startupMessage;
     static int image;
     static bool neutral;
     static uint8_t waterTemp;
@@ -40,7 +51,7 @@ private:
     static uint16_t engineRPM;
     static float lambda;
     static char gear;
-    static uint8_t prevmph;
+    static uint16_t prevmph;
     static uint16_t currentMessage;
 public:
     NextionInterface();

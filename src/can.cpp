@@ -43,68 +43,141 @@ void CanInterface::print_can_sniff(const CAN_message_t &msg){
 void CanInterface::receive_can_updates(const CAN_message_t &msg) {
     canActive = true;
 
-
-    switch (msg.id){
-        /*
-        TO DO:
-        The following code contains the cases for each of the sensor values gathered from CAN.
-        One of the cases below has been filled in as an example.
-
-        Additionally, some of the cases are written as ints, others are in hexcode, convert all hexcode cases
-        to their integer value.
-        */
-        case 1600:
-            //rpm
-            uint16_t rpm = (msg.buf[0] << 8 | msg.buf[1]);
+    switch (msg.id) {
+        // 1600: RPM
+        case 1600: {
+            uint16_t rpm = (static_cast<uint16_t>(msg.buf[0]) << 8) | msg.buf[1];
+            uint16_t speed = NextionInterface::kmhtomph((static_cast<uint16_t> (msg.buf[2])));
             NextionInterface::setRPM(rpm);
+            NextionInterface::setSpeed(speed);
             RevLights::updateLights(rpm);
             break;
-        case 1609:
-            NextionInterface::setWaterTemp(msg.buf[0] -40);
-            NextionInterface::setOilTemp(msg.buf[1] - 40);
-            NextionInterface::setVoltage(msg.buf[5] * 0.1);
+        }
+
+        // 1609: Temps & Voltage
+        case 1609: {
+            NextionInterface::setWaterTemp(static_cast<int16_t>(msg.buf[0]) - 40);
+            NextionInterface::setOilTemp(static_cast<int16_t>(msg.buf[1]) - 40);
+            NextionInterface::setVoltage(static_cast<float>(msg.buf[5]) * 0.1f);
             break;
-        case 1612:
-            //coolantTempWarning, oilTempWarning, oilPressureWarning, fuelPressureWarning
-            //Example from Coolant Temp: 47|1@0+ (1,0) [0|1] (47 is byte placement) (1@0+ 1 is the length, @0 is Motorola/ Big endian bit ordering, + is unsigned) (Factor, offset) physical = raw x facto + offset) [min|max] valid physical
-            //Coolant Temp would then be calculated through Start bit / 8 then 7 - (startBit % 8) 
-            //i.e 47 / 8 = 5 7 - (47 % 8) = 7 - 7 = 0
-            //Flag is in bit 0 byte 5
-            constexpr uint8_t coolantMask = 0b00000001;
-            constexpr uint8_t oilTempMask = 0b00001000;
-            constexpr uint8_t oilPressureMask = 0b00010000;
-            constexpr uint8_t fuelPressureMask = 0b01000000;
+        }
+
+        // 1612: Warning flags
+        case 1612: {
+            // Bit masks (byte 5)
+            constexpr uint8_t coolantMask     = 0b00000001; // bit 0
+            constexpr uint8_t oilTempMask     = 0b00001000; // bit 3
+            constexpr uint8_t oilPressureMask = 0b00010000; // bit 4
+            constexpr uint8_t fuelPressureMask= 0b01000000; // bit 6
+
             uint8_t warnByte = msg.buf[5];
-             if(warnByte & (coolantMask || oilTempMask || oilPressureMask || fuelPressureMask)) {
+            // Use bitwise OR, NOT logical OR.
+            const uint8_t anyWarnMask = (coolantMask | oilTempMask | oilPressureMask | fuelPressureMask);
+
+            if (warnByte & anyWarnMask) {
                 NextionInterface::switchToWarning();
-            } else { // otherwise switch to driver screen
+            } else {
                 NextionInterface::switchToDriver();
             }
             break;
-        case 1613:
+        }
+
+        // 1613: Gear
+        case 1613: {
             NextionInterface::setGear(msg.buf[6] & 15);
             break;
-        case 1284:
-            // WaterPump, FuelPump, Fan
+        }
 
+        // 1284: WaterPump, FuelPump, Fan (fill in as needed)
+        case 1284: {
+            if(msg.buf[0] == 0 || msg.buf[0] == 1){
+                if(msg.buf[1] == 0 || msg.buf[1] == 1){
+                    NextionInterface::setWaterPumpBool(msg.buf[1]);
+                } 
+                else
+                    Serial.println("Water Pump Error");
+
+                if(msg.buf[0] == 0 || msg.buf[0] == 1){
+                    //NextionInterface::setFuelPumpValue(msg.buf[0]);
+                    NextionInterface::setFuelPumpBool(msg.buf[0]);
+                }   
+                else
+                    Serial.println("Fuel Pump Error");
+
+                if(msg.buf[3] == 0 || msg.buf[3] == 1){
+
+                    NextionInterface::setFanBool(msg.buf[3]);
+                }
+                else
+                    Serial.println("Fan Error");
+            }
             break;
-        case 1604:
-            // OilPressure
+            break; // keep break inside the case block
+        }
+
+        // 1604: Oil Pressure
+        case 1604: {
+            // OilPressure is carried in bytes 6..7; header expects two uint8_t args
             NextionInterface::setOilPressure(msg.buf[6], msg.buf[7]);
+            // TODO: machine light indicator (MLI)
             break;
-        // TODO: machine light indicator (MLI)
-        case 1617:
-            //lambda
+        }
+
+        // 1617: Lambda
+        case 1617: {
             NextionInterface::setLambda(msg.buf[0]);
             break;
-        case 2047:
-            // this is for warnings. if any value is greater than 0 it's big bad
-            if (msg.buf != 0) {
-                // TODO
+        }
+
+        // 2047: “Any warnings present” message
+        case 2047: {
+            bool anyNonZero = false;
+            for (uint8_t i = 0; i < msg.len; ++i) {
+                if (msg.buf[i] != 0) { anyNonZero = true; break; }
             }
-        default:
+            if (anyNonZero) {
+                // TODO: handle global warning
+            }
             break;
+        }
+
+        default: {
+            break;
+        }
     }
+}
+void CanInterface::send_shift(const bool up, const bool down,const bool button3){
+    shift_msg.id = 2032;
+
+    shift_msg.len = 6;
+
+    if(up){
+        shift_msg.buf[0] = 111;
+        shift_msg.buf[1] = 127;
+    } else {
+        shift_msg.buf[0] = 0;
+        shift_msg.buf[1] = 0;
+    }
+    
+    if(down){
+        shift_msg.buf[2] = 95;
+        shift_msg.buf[3] = 127;
+    } else {
+        shift_msg.buf[2] = 0;
+        shift_msg.buf[3] = 0;
+    }
+
+    if(button3){
+        shift_msg.buf[4] = 95;
+        shift_msg.buf[5] = 127;
+    }else{
+        shift_msg.buf[4] = 0;
+        shift_msg.buf[5] = 0;
+    }
+
+
+    
+    Can0.write(shift_msg);
 }
 
 void CanInterface::task(){

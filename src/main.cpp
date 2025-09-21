@@ -1,27 +1,14 @@
 #include "main.h"
 #include "neopixel.h"
-#include "gps_speed.h"
 #include <IntervalTimer.h>
 
 
 // Define the callback function
-void shifterCallback(); 
 void buttonsCallback();
-
+ void shifterCallback();
 // Create an IntervalTimer object
 IntervalTimer timer;
 
-SpeedCalc g_speedCalc(0.25);
-void onGpsFix(double lat_deg, double lon_deg, double time_seconds, bool fix_ok, float hdop) {
-  GpsPoint p{ lat_deg, lon_deg, time_seconds, fix_ok, hdop };
-  const double mph = g_speedCalc.update(p);
-
-  if (std::isfinite(mph)) {
-
-    const double mph_display = (std::fabs(mph) < 1.0) ? 0.0 : mph;
-
-  }
-}
 
 int const shiftUp = 43;
 int const shiftDown = 42;
@@ -51,7 +38,6 @@ void setup() {
   RevLights::begin(75, true, 9600);
   //Switches to the driver screen
   NextionInterface::switchToDriver();
-
   timer.begin(shifterCallback, 20000); // 20,000 microseconds = 20 milliseconds = 50 Hz
 }
 
@@ -72,4 +58,32 @@ void buttonsCallback() {
   //       NextionInterface::switchToYippee();
   //   }
   // }
+}
+void shifterCallback() { // This function will be called every 20 milliseconds (50 Hz)
+  static bool shiftUpState = false;
+  static bool shiftDownState = false;
+  static bool button3State = false;
+
+  if (digitalRead(shiftUp) == 1 && shiftUpState == false){
+    // Serial.println("UP");
+    shiftUpState = true;
+  }
+  else if (digitalRead(shiftDown) == 1 && shiftDownState == false){
+    // Serial.println("DOWN");
+    shiftDownState = true;
+  }
+  else if (digitalRead(shiftDown) == 0 && shiftDownState == true){
+    shiftDownState = false;
+  }
+  else if (digitalRead(shiftUp) == 0 && shiftUpState == true){
+    shiftUpState = false;
+  }
+  else if(digitalRead(button3) ==1 && button3State == false){
+    button3State = true;
+  }
+  else if (digitalRead(button3) == 0 && button3State == true){
+    button3State = false;
+  }
+
+  CanInterface::send_shift(shiftUpState, shiftDownState,button3State);
 }
