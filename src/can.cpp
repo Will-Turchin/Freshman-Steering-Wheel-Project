@@ -49,7 +49,7 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg) {
             uint16_t rpm = ((msg.buf[0] << 8) | msg.buf[1]);
             uint16_t speed = (msg.buf[2]);
             NextionInterface::setRPM(rpm);
-            NextionInterface::setSpeed(speed);
+            // NextionInterface::setSpeed(speed);
             RevLights::updateLights(rpm);
         }
             break;
@@ -132,7 +132,21 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg) {
         case 1617: 
             NextionInterface::setLambda(msg.buf[0]);
             break;
+
         
+        case 1608: {
+            int wheelSpeedFL = ((((static_cast<uint16_t>(msg.buf[0])) | (static_cast<uint16_t>(msg.buf[1]) << 8))*0.0277777777778)*15)*0.00094697;
+            int wheelSpeedFR =  ((((static_cast<uint16_t>(msg.buf[2])) | (static_cast<uint16_t>(msg.buf[3]) << 8))*0.0277777777778)*15)*0.00094697;
+            int speed = (wheelSpeedFL+wheelSpeedFR)/2; // gets the average between two wheels
+        
+
+            // Serial.print(msg.buf[3]);
+            // Serial.print("  ");
+            // Serial.println(msg.buf[2]);
+            NextionInterface::setSpeed(speed);
+        }
+
+            break;
 
         // 2047: “Any warnings present” message
         case 2047: 
@@ -140,6 +154,7 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg) {
                 
             }
         
+
 
         default: 
             break;

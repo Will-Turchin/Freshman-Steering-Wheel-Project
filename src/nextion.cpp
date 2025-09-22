@@ -43,7 +43,7 @@ short NextionInterface::kmhtomph(short kmh){
 
 //Sends Message to message
 void NextionInterface::sendNextionMessage(String message) {
-    Serial.println(message);
+    // Serial.println(message);
     Serial2.print(message);
     Serial2.write(0xFF);
     Serial2.write(0xFF);
