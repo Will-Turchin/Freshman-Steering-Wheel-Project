@@ -1,11 +1,12 @@
 #include <Adafruit_NeoPixel.h>
+#include <Arduino.h>
 
 #ifndef NEOPIXEL_H
 #define NEOPIXEL_H
 
 
 class RevLights {
-private:
+public:
     constexpr static const int LED_PINS = 26;
     constexpr static const int NUM_PIXELS = 12;
 
@@ -16,7 +17,7 @@ private:
     // Were making an array of leds that each have an rpm threshold and a color
     struct ledRPMThreshold {
         int threshold;
-        int color;
+        uint32_t color;
     };
 
     static Adafruit_NeoPixel pixels;
@@ -26,73 +27,9 @@ private:
     constexpr static const int LED_COLOR_BLUE = 0x0000FF;
     constexpr static const int LED_COLOR_YELLOW = 0x7FFF00;
     constexpr static const int LED_COLOR_OFF = 0;
-
-
-public:
     static ledRPMThreshold *ledRPMThresholds;
-    RevLights()
-    {
-        Serial.println("RevLights constructor called.");
-        ledRPMThresholds = new ledRPMThreshold[NUM_PIXELS]; //allocate memory
-        init();
-    }
-    ~RevLights()
-    {
-        delete[] ledRPMThresholds; // Free allocated memory
-    }
-
-    void static init()
-    {
-        Serial.begin(9600);
-        Serial.println("Rev Lights Initalized");
-        ledRPMThresholds = new ledRPMThreshold[NUM_PIXELS]; // INITIALIZE ledRPMThreshold (REQUIRED)
-        pixels.begin();// INITIALIZE NeoPixel strip object (REQUIRED)
-        pixels.setBrightness(75); // Normal 150
-        pixels.clear();
-        pixels.show();
-        
-        
-        // fill the thresholds array
-        for (int i = 8; i < 12; i++) {
-            ledRPMThresholds[i].threshold = SHIFT_POINT;
-            ledRPMThresholds[i].color = LED_COLOR_BLUE;
-        }
-        for (int i = 7; i >= 0; i--) {
-            ledRPMThresholds[i].threshold = ledRPMThresholds[i+1].threshold - RPM_DIFFERENCE;
-            if (i >= 4) {
-                ledRPMThresholds[i].color = LED_COLOR_GREEN;
-            } else {
-                ledRPMThresholds[i].color = LED_COLOR_YELLOW;
-            }
-        }
-        delay(100);
-        updateLights(0);
-    }
-
-    void static updateLights(int rpm) //DEV NOTE: If this class is failing, it likely means data types arent being initialized
-    {   
-        
-        pixels.clear();
-        if(rpm >= REDLINE){ //If RPM past redline set the revlights all to red
-            for (int i = 0; i < 12; i++) {
-                pixels.setPixelColor(i, LED_COLOR_RED);
-            }
-        } else if(rpm == 0){
-            for (int i = 0; i < NUM_PIXELS; i++) {
-                pixels.setPixelColor(i, LED_COLOR_GREEN);
-            }
-        } else {
-            for (int i = 0; i < 12; i++) { //checks each led threshold, if met sets it to it's color
-                if (rpm >= ledRPMThresholds[i].threshold) {
-                    pixels.setPixelColor(i, ledRPMThresholds[i].color);
-                } else {
-                    pixels.setPixelColor(i, LED_COLOR_OFF);
-                }
-            }
-            
-        }
-        pixels.show();
-    }
+    static void begin(uint8_t brightness = 75, bool initSerial = false, uint32_t serialBaud = 9600);
+    static void updateLights(int rpm);
+    static void teardown(); 
 };
-
-#endif // NEOPIXEL_H
+#endif
