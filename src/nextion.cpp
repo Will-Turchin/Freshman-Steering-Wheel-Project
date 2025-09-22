@@ -2,11 +2,11 @@
 //Inits Nextion as Loading Screen
 page NextionInterface::current_page = page::LOADING;
 //Sets initial value
-uint8_t NextionInterface::waterTemp = 1;
-uint8_t NextionInterface::oilTemp = 1;
-uint16_t NextionInterface::oilPressure = 1;
-float NextionInterface::batteryVoltage = -1;
-uint16_t NextionInterface::engineRPM = 1;
+uint8_t NextionInterface::waterTemp = 999;
+uint8_t NextionInterface::oilTemp = 999;
+uint16_t NextionInterface::oilPressure = 999;
+float NextionInterface::batteryVoltage = 999;
+uint16_t NextionInterface::engineRPM = 999;
 float NextionInterface::lambda = -1;
 char NextionInterface::gear = '?';
 uint16_t NextionInterface::prevmph = -1;  
@@ -95,7 +95,7 @@ void NextionInterface::setVoltage(float value) {
         batteryVoltage = value;
         batteryVoltage = value;
 
-        String instruction = "voltageVar.txt=\"" + String(value, 1) + " V\"";
+        String instruction = "voltageVar.txt=\"" + String(value, DEC) + " V\"";
         sendNextionMessage(instruction);
     }
 }
