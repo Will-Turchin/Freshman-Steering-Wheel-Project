@@ -63,6 +63,7 @@ void shifterCallback() { // This function will be called every 20 milliseconds (
   static bool shiftUpState = false;
   static bool shiftDownState = false;
   static bool button3State = false;
+  static bool button4State = false;
 
   if (digitalRead(shiftUp) == 1 && shiftUpState == false){
     // Serial.println("UP");
@@ -84,6 +85,12 @@ void shifterCallback() { // This function will be called every 20 milliseconds (
   else if (digitalRead(button3) == 0 && button3State == true){
     button3State = false;
   }
-
-  CanInterface::send_shift(shiftUpState, shiftDownState,button3State);
+  else if (digitalRead(button4) == 1 && button4State == false){
+    button4State = true;
+    Serial.println("Button 4 Pressed");
+  }
+  else if (digitalRead(button4) == 0 && button4State == true){
+    button4State = false;
+  }
+  CanInterface::send_shift(shiftUpState, shiftDownState,button3State,button4State);
 }
