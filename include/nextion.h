@@ -42,6 +42,7 @@ private:
     static bool startupFan;
     static bool startupMLI;
     static bool startupMessage;
+    static bool startupGear;
     static int image;
     static bool neutral;
     static uint8_t waterTemp;

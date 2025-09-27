@@ -19,6 +19,7 @@ bool NextionInterface::startupOilPump = false;
 bool NextionInterface::startupVoltage = false;
 bool NextionInterface::startupSpeed = false;
 bool NextionInterface::startupRPM = false;
+bool NextionInterface::startupGear = false;
 bool NextionInterface::neutral = false;
 bool NextionInterface::startupFan = false;
 bool NextionInterface::startupFuelPump = false;
@@ -28,7 +29,6 @@ NextionInterface::NextionInterface() {}
 
 void NextionInterface::init() {
     Serial2.begin(9600);
-    delay(200);
     Serial.println("Nextion Setup");
     switchToLoading();
 }
@@ -134,11 +134,12 @@ void NextionInterface::setGear(int numGear) {
     }
 
 
-    if (newGear != gear) {
+    if (newGear != gear || !startupGear) {
         gear = newGear;
         Serial.println(gear);
         String instruction = "gearShiftVar.txt=\"" + String(gear) + '\"';
         sendNextionMessage(instruction);
+        startupGear = true;
     }
 }
 void NextionInterface::setButtonImage(String elementName, bool value) {

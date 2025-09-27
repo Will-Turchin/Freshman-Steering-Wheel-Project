@@ -26,7 +26,6 @@ void setup() {
   pinMode(button5,INPUT_PULLUP);
   pinMode(button6,INPUT_PULLUP);
   
-  delay(8000);
   Serial.begin(9600);
   //Starts Nextion
   Serial.println("Starting nextion interface");
