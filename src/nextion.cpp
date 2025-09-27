@@ -52,7 +52,9 @@ void NextionInterface::sendNextionMessage(String message) {
 //Sets the Water Temp on Screen
 void NextionInterface::setWaterTemp(int value) {
     if(!startupWaterTemp){
-        String instruction = "waterTempVar.txt=\"" + String("999") + " " + char(176) + "F\"";
+        waterTemp = value;
+
+        String instruction = "waterTempVar.txt=\"" + String(ctof(value), DEC) + " " + char(176) + "F\"";
         sendNextionMessage(instruction);
         startupWaterTemp = true;
     } else if(value != waterTemp){
@@ -66,7 +68,9 @@ void NextionInterface::setWaterTemp(int value) {
 //Set Oil Temp
 void NextionInterface::setOilTemp(uint8_t value) {
     if(!startupOilTemp){
-        String instruction = "oilTempVar.txt=\"" + String("999") + " " + char(176) + "F\"";
+        oilTemp = value;
+
+        String instruction = "oilTempVar.txt=\"" + String(ctof(value), DEC) + " " + char(176) + "F\"";
         sendNextionMessage(instruction);
         startupOilTemp = true;
 
@@ -112,8 +116,10 @@ void NextionInterface::setDriverMessage(uint16_t value) {
 void NextionInterface::setRPM(uint16_t value) {
     value = kmhtomph(value);
     if(!startupRPM){
-        String instruction = "rpmVar.txt=\"" + String("999") + "\"";
-        sendNextionMessage(instruction);
+        engineRPM = value;
+        int roundedValue = (value / 100)*100;
+
+        String instruction = "rpmVar.txt=\"" + String(roundedValue, DEC) + "\"";
         startupRPM = true;
     } else if(value != engineRPM){
         engineRPM = value;
@@ -159,7 +165,7 @@ void NextionInterface::setButtonImage(String elementName, bool value) {
 void NextionInterface::setFuelPumpBool(bool value) {
     setButtonImage("fuelPumpVar", value);
     if(!startupFuelPump){
-        setButtonImage("fuelPumpVar", 1);
+        setButtonImage("fuelPumpVar", value);
         startupFuelPump = true;
     }
 }
@@ -167,7 +173,7 @@ void NextionInterface::setFuelPumpBool(bool value) {
 void NextionInterface::setFanBool(bool value) {
     setButtonImage("fanVar", value);
     if(!startupFan){
-        setButtonImage("fanVar", 1);
+        setButtonImage("fanVar", value);
         startupFan = true;
     }
 }
@@ -175,7 +181,7 @@ void NextionInterface::setFanBool(bool value) {
 void NextionInterface::setWaterPumpBool(bool value) {
     setButtonImage("waterPumpVar", value);
     if(!startupWaterPump){
-        setButtonImage("waterPumpVar", 1);
+        setButtonImage("waterPumpVar", value);
         startupWaterPump = true;
     }
 }
@@ -183,7 +189,7 @@ void NextionInterface::setWaterPumpBool(bool value) {
 void NextionInterface::setMLIBool(bool value) {
     setButtonImage("MLIVar", value);
     if(!startupMLI){
-        setButtonImage("MLIVar", 1);
+        setButtonImage("MLIVar", value);
         startupMLI = true;
     }
 }
@@ -191,7 +197,7 @@ void NextionInterface::setMLIBool(bool value) {
 void NextionInterface::setMessageBool(bool value) {
     setButtonImage("MessageVar", value);
     if(!startupMessage){
-        setButtonImage("MessageVar", 1);
+        setButtonImage("MessageVar", value);
         startupMessage = true;
     }
 }
