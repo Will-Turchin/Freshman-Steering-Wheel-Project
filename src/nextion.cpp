@@ -51,32 +51,32 @@ void NextionInterface::sendNextionMessage(String message) {
 }
 //Sets the Water Temp on Screen
 void NextionInterface::setWaterTemp(int value) {
-    if(value != waterTemp){
+    if(!startupWaterTemp){
+        String instruction = "waterTempVar.txt=\"" + String("999") + " " + char(176) + "F\"";
+        sendNextionMessage(instruction);
+        startupWaterTemp = true;
+    } else if(value != waterTemp){
         waterTemp = value;
 
         String instruction = "waterTempVar.txt=\"" + String(ctof(value), DEC) + " " + char(176) + "F\"";
         sendNextionMessage(instruction);
     }
-    if(!startupWaterTemp){
-        String instruction = "waterTempVar.txt=\"" + String("999") + " " + char(176) + "F\"";
-        sendNextionMessage(instruction);
-        startupWaterTemp = true;
-    }
+
 }
 //Set Oil Temp
 void NextionInterface::setOilTemp(uint8_t value) {
-    if(value != oilTemp){
-        oilTemp = value;
-
-        String instruction = "oilTempVar.txt=\"" + String(ctof(value), DEC) + " " + char(176) + "F\"";
-        sendNextionMessage(instruction);
-    }
     if(!startupOilTemp){
         String instruction = "oilTempVar.txt=\"" + String("999") + " " + char(176) + "F\"";
         sendNextionMessage(instruction);
         startupOilTemp = true;
 
+    } else if(value != oilTemp){
+        oilTemp = value;
+
+        String instruction = "oilTempVar.txt=\"" + String(ctof(value), DEC) + " " + char(176) + "F\"";
+        sendNextionMessage(instruction);
     }
+
 }
 //Set Oil Pressure and send string
 void NextionInterface::setOilPressure(uint8_t value, uint8_t value2) {
@@ -111,18 +111,18 @@ void NextionInterface::setDriverMessage(uint16_t value) {
 //Set the RPM on the screen
 void NextionInterface::setRPM(uint16_t value) {
     value = kmhtomph(value);
-    if(value != engineRPM){
+    if(!startupRPM){
+        String instruction = "rpmVar.txt=\"" + String("999") + "\"";
+        sendNextionMessage(instruction);
+        startupRPM = true;
+    } else if(value != engineRPM){
         engineRPM = value;
         int roundedValue = (value / 100)*100;
 
         String instruction = "rpmVar.txt=\"" + String(roundedValue, DEC) + "\"";
         sendNextionMessage(instruction);
     }   
-    if(!startupRPM){
-        String instruction = "rpmVar.txt=\"" + String("999") + "\"";
-        sendNextionMessage(instruction);
-        startupRPM = true;
-    }
+
 }
 //Set Gear level  can remove and fix nextion screen
 void NextionInterface::setGear(int numGear) {
