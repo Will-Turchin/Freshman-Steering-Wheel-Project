@@ -255,7 +255,7 @@ void NextionInterface::switchToStartUp() {
 
 void NextionInterface::switchToDriver() {
     if(current_page != page::DIAGNOSTICS){
-        sendNextionMessage("page DRIVER");
+        sendNextionMessage("page DIAGNOSTICS");
         current_page = page::DIAGNOSTICS;
     }
 }

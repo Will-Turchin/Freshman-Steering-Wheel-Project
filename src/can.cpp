@@ -46,7 +46,7 @@ void CanInterface::receive_can_updates(const CAN_message_t &msg) {
     switch (msg.id) {
         // 1600: RPM
         case 1600: {
-            uint16_t rpm = ((msg.buf[0] << 8) | msg.buf[1]);
+            uint16_t rpm = (msg.buf[1] | (msg.buf[0] << 8));
             uint16_t speed = (msg.buf[2]);
             NextionInterface::setRPM(rpm);
             // NextionInterface::setSpeed(speed);
