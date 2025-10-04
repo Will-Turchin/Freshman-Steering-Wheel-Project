@@ -28,8 +28,8 @@ private:
     static int const RGB565_RED = 45056;
     static int const RGB565_BLACK = 0;
 
-    static int const GREEN_BUTTON_ID = 85;
-    static int const RED_BUTTON_ID = 84;
+    static int const GREEN_BUTTON_ID = 5;
+    static int const RED_BUTTON_ID = 4;
     
     static bool startupWaterTemp;
     static bool startupWaterPump;

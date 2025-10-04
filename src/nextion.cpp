@@ -29,6 +29,7 @@ NextionInterface::NextionInterface() {}
 
 void NextionInterface::init() {
     Serial2.begin(9600);
+    delay(200);
     Serial.println("Nextion Setup");
     switchToLoading();
 }
@@ -45,9 +46,9 @@ short NextionInterface::kmhtomph(short kmh){
 void NextionInterface::sendNextionMessage(String message) {
     // Serial.println(message);
     Serial2.print(message);
-    Serial2.write(0xFF);
-    Serial2.write(0xFF);
-    Serial2.write(0xFF);
+    Serial2.write(255);
+    Serial2.write(255);
+    Serial2.write(255);
 }
 //Sets the Water Temp on Screen
 void NextionInterface::setWaterTemp(int value) {
@@ -253,9 +254,9 @@ void NextionInterface::switchToStartUp() {
 }
 
 void NextionInterface::switchToDriver() {
-    if(current_page != page::DRIVER){
+    if(current_page != page::DIAGNOSTICS){
         sendNextionMessage("page DRIVER");
-        current_page = page::DRIVER;
+        current_page = page::DIAGNOSTICS;
     }
 }
 

@@ -31,5 +31,8 @@ public:
     static void begin(uint8_t brightness = 75, bool initSerial = false, uint32_t serialBaud = 9600);
     static void updateLights(int rpm);
     static void teardown(); 
+    static void serialBegin();
 };
+
+
 #endif

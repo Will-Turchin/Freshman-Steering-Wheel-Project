@@ -31,12 +31,18 @@ void setup() {
   Serial.println("Starting nextion interface");
   NextionInterface::init(); // Creates Serial Port to Display
   Serial.println("Nextion interface initialized.");
+
+  NextionInterface::switchToDriver();
+
+  while(NextionInterface::getCurrentPage() != page::DIAGNOSTICS){
+    
+  }
   //Start Can
   CanInterface::init();
   //Starts Rev Lights
   RevLights::begin(75, true, 9600);
   //Switches to the driver screen
-  NextionInterface::switchToDriver();
+
   timer.begin(shifterCallback, 20000); // 20,000 microseconds = 20 milliseconds = 50 Hz
 }
 
